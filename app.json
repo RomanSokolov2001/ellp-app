@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "ellp-app",
+    "slug": "ellp-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/ellp-logo.png",
+    "scheme": "ellp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "assetBundlePatterns": ["**/*"],
+    "splash": {
+      "image": "./assets/images/ellp-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.ellpapp"
+    },
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/ellp-logo.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.anonymous.ellpapp"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/ellp-logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9bca59f3-8f19-4897-aa18-d300429db2c6"
+      }
+    }
+  }
+}

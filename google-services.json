@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "491263380880",
+    "firebase_url": "https://ellp-app-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "ellp-app",
+    "storage_bucket": "ellp-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491263380880:android:4c2538b54c49cefd207715",
+        "android_client_info": {
+          "package_name": "com.anonymous.ellpapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0hw_QAVDj5u9fIX2zlRbYtns9G2IDUd4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
