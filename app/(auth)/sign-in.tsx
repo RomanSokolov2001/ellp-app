@@ -9,8 +9,9 @@ import { Link } from "expo-router";
 import colors from "@/assets/colors/colors";
 import { authService } from "../services/authService";
 import { User } from "../redux/userSlice";
-import { useDispatch } from "react-redux"; // Import useDispatch to dispatch the setUser action
-import { setUser } from "../redux/userSlice"; // Import the setUser action
+import {useDispatch, useSelector} from "react-redux"; // Import useDispatch to dispatch the setUser action
+import { setUser } from "../redux/userSlice";
+import {RootState} from "@/app/redux/store"; // Import the setUser action
 
 const SignIn = () => {
   const [form, setForm] = useState({ email: "", password: "" }); // Empty initial values
@@ -18,6 +19,11 @@ const SignIn = () => {
   const [error, setError] = useState("");
   const router = useRouter();
   const dispatch = useDispatch(); // Get dispatch function from Redux
+  const userFromSelector = useSelector((state: RootState) => state.userSlice.user);
+
+  useEffect(() => {
+    console.log('test!')
+  }, []);
 
   const submit = async () => {
     setIsSubmitting(true);

@@ -10,7 +10,7 @@ import MediumButtonComponent from "@/components/MediumButtonComponent";
 import MenuItem from "@/components/MenuItem";
 import { useRouter } from "expo-router";
 import CustomAlert from "@/components/CustomAlert";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Loading from "@/components/Loading";
 import { RootState } from "@/app/redux/store";
 import RootStackParamList from "@/app/types/Navigation";

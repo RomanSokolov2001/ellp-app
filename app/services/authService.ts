@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { User } from '../redux/userSlice';
 
-const API_IP = "http://16.171.154.134:5000"
+const API_IP = "http://13.60.12.192:5000"
 const LOGIN_ENDPOINT = "api/members/login"
 const SIGNUP_ENDPOINT = "api/members/signup"
 

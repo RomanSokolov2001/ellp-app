@@ -68,7 +68,7 @@ const SignUp = () => {
             // Create user with email and password
             const userCredential = await authService.signup(
                 form.email,
-                form.password,
+                form.username,
                 form.password,
                 form.firstName,
                 form.lastName,
