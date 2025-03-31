@@ -16,11 +16,11 @@ type EventsScreenNavigationProp = NativeStackNavigationProp<
 
 export interface EventData {
   id: string;
-  imageUrl: string;
+  imageUrl: any;
   location: string;
   date: string;
-  description: string;
-  title: string;
+  description: any;
+  title: any;
   startTime: string;
   endTime?: string;
   discount?: string;
@@ -39,23 +39,30 @@ const EventsScreen: React.FC = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const eventsCollection = collection(firestoreDb, "events");
-        const eventsSnapshot = await getDocs(eventsCollection);
-        const eventsData = eventsSnapshot.docs.map((doc) => {
-          const data = doc.data() as EventData;
-          return {
-            ...data,
-            id: doc.id,
-          };
-        });
+        
+        const response = await fetch("https://erasmuslifelaspalmas.com/wp-json/wp/v2/product");
+        const data = await response.json();
+
+        const eventsData = data.map((event: any) => ({
+          id: event.id.toString(),
+          imageUrl: event.yoast_head_json?.og_image[0]?.url,
+          webPageUrl: event.link,
+          title: event.title?.rendered || "No Title",
+          date: event.date.split("T")[0] || "No Date",
+          description: event.yoast_head_json?.og_description || "No Description",
+          location: "Las Palmas, Gran Canaria",
+          price: "?",
+        }));
+
         setEvents(eventsData);
-      } catch (error) {
+      }
+      catch (error) {
         console.error("Error fetching events:", error);
-      } finally {
+      }
+      finally {
         setLoading(false);
       }
     };
-
     fetchEvents();
   }, []);
 
@@ -68,33 +75,32 @@ const EventsScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView>
-        <FlatList
-          data={events}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <EventCard
-              imageUrl={item.imageUrl}
-              location={item.location}
-              description={item.description}
-              date={item.date}
-              title={item.title}
-              onPress={() => handlePress(item)}
-            />
-          )}
-        />
-      </SafeAreaView>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <FlatList
+        contentContainerStyle={styles.list}
+        data={events}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <EventCard
+            imageUrl={item.imageUrl}
+            location={item.location}
+            description={item.description}
+            date={item.date}
+            title={item.title}
+            onPress={() => handlePress(item)}
+          />
+        )}
+      />
+    </SafeAreaView>
   );
 };
 
+export default EventsScreen;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  list: {
+    width: "100%",
     padding: 16,
   },
 });
-
-export default EventsScreen;

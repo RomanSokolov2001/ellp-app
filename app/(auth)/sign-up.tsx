@@ -201,7 +201,6 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     signUpButton: {
-        marginHorizontal: 12,
         marginTop: 20,
     },
     signInLinkContainer: {

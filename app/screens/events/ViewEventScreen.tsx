@@ -8,10 +8,10 @@ import {
   StyleSheet,
   Text,
   ScrollView,
-  ImageBackground,
-  TouchableOpacity,
+  Image,
+  Dimensions,
 } from "react-native";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 type ViewEventScreenProps = StackScreenProps<
   RootStackParamList,
@@ -37,12 +37,32 @@ export default function ViewEventScreen({
       );
   };
 
+  // Get the image height based on the screen width
+  const screenWidth = Dimensions.get("window").width;
+  const [imageHeight, setImageHeight] = useState(200);
+
+  useEffect(() => {
+    if (event.imageUrl) {
+      Image.getSize(
+        event.imageUrl,
+        (width, height) => {
+          const ratio = height / width;
+          setImageHeight(screenWidth * ratio);
+        },
+        (error) => {
+          console.error("Image load error:", error);
+        }
+      );
+    }
+  }, [event.imageUrl]);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Event Image */}
-      <ImageBackground
+      <Image
         source={{ uri: event.imageUrl }}
-        style={styles.eventImage}
+        style={{ width: "100%", height: imageHeight }}
+        resizeMode="contain"
       />
       <Text style={styles.title}>{event.title}</Text>
       <Text style={styles.description}>{event.description}</Text>
@@ -78,9 +98,9 @@ export default function ViewEventScreen({
         </View>
         <View style={styles.infoColumnContainer}>
           <Text style={styles.infoTextMain}>{event.price} euros</Text>
-          <Text style={styles.infoText}>
+          {/* <Text style={styles.infoText}>
             {event.priceMembers} euros for members
-          </Text>
+          </Text> */}
         </View>
       </View>
 
@@ -91,12 +111,8 @@ export default function ViewEventScreen({
         </View>
         <View style={styles.infoColumnContainer}>
           <Text style={styles.infoTextMain}>
-            See the event to buy tickets on our webpage:
-            <Text style={styles.linkText} onPress={openWebPage}>
-              {" here "}
-            </Text>
+            Buy the tickets on our <Text style={styles.linkText} onPress={openWebPage}>webpage</Text>
           </Text>
-          <Text style={styles.infoText}>See you there!</Text>
         </View>
       </View>
     </ScrollView>
@@ -105,28 +121,20 @@ export default function ViewEventScreen({
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    paddingHorizontal: 20,
+    padding: 16,
     backgroundColor: colors.white,
-  },
-  eventImage: {
-    width: "100%",
-    height: 180,
-    marginBottom: 16,
-    marginTop: 10,
+    flexGrow: 1,
   },
   title: {
-    fontSize: 26,
+    fontSize: 20,
     fontFamily: "Lexend-SemiBold",
-    marginBottom: 10,
-    textAlign: "center",
+    marginBottom: 16,
     color: colors.text,
   },
   description: {
     fontSize: 16,
     fontFamily: "Lexend-Light",
-    marginBottom: 20,
-    textAlign: "center",
+    marginBottom: 16,
     color: colors.text,
   },
   rowInfoContainer: {
@@ -144,7 +152,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   infoColumnContainer: {
-    padding: 10,
+    width: "100%",
+    display: "flex",
   },
   infoText: {
     fontSize: 16,
