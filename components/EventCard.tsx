@@ -16,14 +16,15 @@ type EventCardProps = {
   title: string;
   description: string;
   onPress: () => void;
+  stock?: number;
 };
 
 const EventCard: React.FC<EventCardProps> = ({
   imageUrl,
   date,
   title,
-  description,
   onPress,
+  stock,
 }) => {
   return (
     <View style={styles.card}>
@@ -31,16 +32,22 @@ const EventCard: React.FC<EventCardProps> = ({
         source={{ uri: imageUrl }}
         style={styles.image}
       >
-        <View style={styles.content}>
-            <Text style={styles.date}>
-              Posted: {date}
-            </Text>
+        {!stock && (
+          <View style={styles.sold}>
+          <Text style={styles.soldText}>Sold Out</Text>
+        </View>
+        )}
 
-            <Text style={styles.title}>{title}</Text>
-            
-            <TouchableOpacity style={styles.button} onPress={onPress}>
-                <Text style={styles.buttonText}>View event</Text>
-            </TouchableOpacity>
+        <View style={styles.content}>
+          <Text style={styles.date}>
+            {date}
+          </Text>
+
+          <Text style={styles.title}>{title}</Text>
+          
+          <TouchableOpacity style={styles.button} onPress={onPress}>
+              <Text style={styles.buttonText}>View event</Text>
+          </TouchableOpacity>
         </View>
       </ImageBackground>
     </View>
@@ -50,7 +57,7 @@ const EventCard: React.FC<EventCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     width: "100%",
-    height: 350,
+    height: 400,
     marginBottom: 16,
     borderRadius: 16,
     backgroundColor: colors.white,
@@ -97,6 +104,27 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontFamily: "Lexend-Medium",
     fontSize: 14,
+  },
+  sold: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    backgroundColor: "red",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  soldText: {
+    color: colors.white,
+    fontWeight: "bold",
+    fontSize: 14,
+    fontFamily: "Lexend-Regular",
   },
 });
 

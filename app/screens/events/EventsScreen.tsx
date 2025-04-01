@@ -8,6 +8,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import RootStackParamList from "@/app/types/Navigation";
 import LoadingScreen from "@/components/LoadingScreen";
+import stripHtml from "@/app/services/stripHTML";
+import getMetaValue from "@/app/services/getMetaValue";
 
 type EventsScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -28,6 +30,7 @@ export interface EventData {
   priceMembers?: string;
   contact?: string;
   webPageUrl?: string;
+  stock?: string;
 }
 
 const EventsScreen: React.FC = () => {
@@ -39,19 +42,19 @@ const EventsScreen: React.FC = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        
-        const response = await fetch("https://erasmuslifelaspalmas.com/wp-json/wp/v2/product");
-        const data = await response.json();
 
+        const response = await fetch('https://erasmuslifelaspalmas.com/wp-json/custom/v1/events');
+        const data = await response.json();
         const eventsData = data.map((event: any) => ({
           id: event.id.toString(),
-          imageUrl: event.yoast_head_json?.og_image[0]?.url,
-          webPageUrl: event.link,
-          title: event.title?.rendered || "No Title",
-          date: event.date.split("T")[0] || "No Date",
-          description: event.yoast_head_json?.og_description || "No Description",
-          location: "Las Palmas, Gran Canaria",
-          price: "?",
+          title: event.name,
+          description: stripHtml(event.description),
+          price: event.price,
+          webPageUrl: event.permalink,
+          imageUrl: event.images[0].src,
+          date: getMetaValue(event, "event_date"),
+          location: getMetaValue(event, "event_location"),
+          stock: event.stock_quantity as String,
         }));
 
         setEvents(eventsData);
@@ -89,6 +92,7 @@ const EventsScreen: React.FC = () => {
             date={item.date}
             title={item.title}
             onPress={() => handlePress(item)}
+            stock={item.stock ? parseInt(item.stock) : 0}
           />
         )}
       />

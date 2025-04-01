@@ -59,30 +59,39 @@ export default function ViewEventScreen({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Event Image */}
-      <Image
-        source={{ uri: event.imageUrl }}
-        style={{ width: "100%", height: imageHeight }}
-        resizeMode="contain"
-      />
+      <View>
+        <Image
+          source={{ uri: event.imageUrl }}
+          style={{ width: "100%", height: imageHeight }}
+          resizeMode="contain"
+        />
+      </View>
       <Text style={styles.title}>{event.title}</Text>
+
+      {/* Sold out badge */}
+      {!event.stock && (
+        <View style={styles.sold}>
+          <Text style={styles.soldText}>Sold Out</Text>
+        </View>
+      )}
+
       <Text style={styles.description}>{event.description}</Text>
 
       {/* Event Date */}
-      <View style={styles.rowInfoContainer}>
+      {event.date && (
+        <View style={styles.rowInfoContainer}>
         <View style={styles.iconCircle}>
           <MaterialIcons name="event" size={28} color={colors.secondary} />
         </View>
         <View style={styles.infoColumnContainer}>
           <Text style={styles.infoTextMain}>{event.date}</Text>
-          <Text style={styles.infoText}>
-            {event.startTime}
-            {event.endTime ? ` - ${event.endTime}` : ""}
-          </Text>
         </View>
       </View>
+      )}
 
       {/* Location */}
-      <View style={styles.rowInfoContainer}>
+      {event.location && (
+        <View style={styles.rowInfoContainer}>
         <View style={styles.iconCircle}>
           <MaterialIcons name="place" size={28} color={colors.secondary} />
         </View>
@@ -90,6 +99,7 @@ export default function ViewEventScreen({
           <Text style={styles.infoTextMain}>{event.location}</Text>
         </View>
       </View>
+      )}
 
       {/* Price */}
       <View style={styles.rowInfoContainer}>
@@ -166,5 +176,26 @@ const styles = StyleSheet.create({
   linkText: {
     color: colors.primary,
     fontFamily: "Lexend-SemiBold",
+  },
+  sold: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    backgroundColor: "red",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  soldText: {
+    color: colors.white,
+    fontWeight: "bold",
+    fontSize: 14,
+    fontFamily: "Lexend-Regular",
   },
 });
