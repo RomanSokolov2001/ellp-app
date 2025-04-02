@@ -30,13 +30,19 @@ export default function InitialScreen() {
     initializeApp();
   }, []);
 
-  return loading ? (
-    <Loading />
-  ) : user ? (
+
+  // return loading ? (
+  //   <Loading />
+  // ) : user ? (
+  //   <Redirect href="/(tabs)/events" />
+  // ) : viewedOnboarding ? (
+  //   <Redirect href="/(auth)/sign-in" />
+  // ) : (
+  //   <Onboarding />
+  // );
+
+  // redirect because login network error occurs
+  return (
     <Redirect href="/(tabs)/events" />
-  ) : viewedOnboarding ? (
-    <Redirect href="/(auth)/sign-in" />
-  ) : (
-    <Onboarding />
   );
 }

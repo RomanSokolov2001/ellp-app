@@ -1,5 +1,5 @@
-export default function stripHtml(html:string) : string {
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-    return temp.textContent || temp.innerText || "";
+import striptags from 'striptags';
+
+export default function stripHtml(html: string): string {
+  return striptags(html);
 }
