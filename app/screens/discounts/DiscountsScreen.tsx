@@ -101,6 +101,9 @@ const Discounts = () => {
             title: discount.title.rendered,
             description: stripHtml(discount.content.rendered),
             imageUrl: discount._embedded["wp:featuredmedia"][0].source_url,
+            location: discount.acf.location ? discount.acf.location : "",
+            discount: discount.acf.discount ? discount.acf.discount : "",
+            industry: discount.acf.industry ? discount.acf.industry : "",
           }));
 
           setDiscounts(discountsData);

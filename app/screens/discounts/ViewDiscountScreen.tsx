@@ -25,11 +25,11 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
     });
   }, [navigation]);
 
-  const handleOpenMaps = () => {
-    Linking.openURL(discount.mapsUrl).catch((err) =>
-      console.error("Failed to open maps URL:", err)
-    );
-  };
+  // const handleOpenMaps = () => {
+  //   Linking.openURL(discount.mapsUrl).catch((err) =>
+  //     console.error("Failed to open maps URL:", err)
+  //   );
+  // };
 
   const resolvedImage = images[discount.imageUrl];
 
@@ -38,14 +38,14 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
       <View style={styles.container}>
         {/* Logo of the collaborator */}
         <ImageBackground
-          source={resolvedImage}
+          source={discount.imageUrl}
           style={styles.discountLogo}
           imageStyle={{ borderRadius: 30, resizeMode: "cover" }}
         />
 
         <Text style={styles.title}>{discount.title}</Text>
         <View style={styles.categoryContainer}>
-          <Text style={styles.category}>{discount.category}</Text>
+          <Text style={styles.category}>{discount.industry}</Text>
         </View>
         <View style={styles.rowInfoContainer}>
           <View style={styles.iconContainer}>
@@ -56,10 +56,7 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
             />
           </View>
           <View style={styles.infoColumnContainer}>
-            <Text style={styles.infoTextMain}>{discount.locationCity}</Text>
-            <Text style={styles.infoText}>
-              {discount.locationStreet}, {discount.locationPostalCode}
-            </Text>
+            <Text style={styles.infoTextMain}>{discount.location}</Text>
           </View>
         </View>
         <View style={styles.rowInfoContainer}>
@@ -73,7 +70,7 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
         </View>
 
         {/* Map */}
-        <TouchableOpacity onPress={handleOpenMaps}>
+        <TouchableOpacity>  {/*onPress={handleOpenMaps}*/}
           <View style={styles.rowInfoContainer}>
             <View style={styles.iconContainer}>
               <MaterialIcons name="map" size={28} color={colors.secondary} />
@@ -86,19 +83,16 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
         </TouchableOpacity>
 
         {/* Extra info */}
+        
         <View style={styles.extraInfoContainer}>
           <Text style={{ textAlign: "left", fontSize: 15 }}>
-            Don't have a membership card yet? Sign up today and start enjoying
-            these exclusive benefits at our partner location!
-            <Text
-              onPress={() => navigation.navigate("JoinUs")}
-              style={styles.link}
-            >
-              {" "}
-              Join us here!
-            </Text>
+            Don't have a membership card yet? Sign up today and start enjoying these exclusive benefits at our partner location!
           </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("JoinUs")}>
+            <Text style={styles.link}>Join us here!</Text>
+          </TouchableOpacity>
         </View>
+
       </View>
     </ScrollView>
   );
@@ -109,7 +103,7 @@ export default ViewDiscountScreen;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    marginHorizontal: 32,
+    padding: 16,
   },
   discountLogo: {
     width: "100%",
@@ -137,25 +131,26 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   rowInfoContainer: {
+    width: "100%",
     flexDirection: "row",
     alignContent: "center",
-    paddingHorizontal: 15,
-    paddingLeft: 10,
-    paddingVertical: 10,
     gap: 10,
+    marginBottom: 16,
   },
   infoColumnContainer: {
+    flex: 1,
+    width: "100%",
     alignContent: "center",
     justifyContent: "center",
-    gap: 3,
-    marginRight: 20,
+    gap: 4,
   },
   infoTextMain: {
+    width: "100%",
     fontSize: 16,
     fontFamily: "Lexend-Medium",
   },
   infoText: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Lexend-Light",
   },
   categoryContainer: {
@@ -170,7 +165,6 @@ const styles = StyleSheet.create({
   },
   extraInfoContainer: {
     marginTop: 10,
-    fontFamily: "Lexend-Regular",
     marginBottom: 20,
   },
   link: {
