@@ -11,7 +11,7 @@ import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import SimpleAlert from "@/components/SimpleAlert";
 import colors from "@/assets/colors/colors";
-import {authService} from "@/app/services/authService";
+import {authService} from "@/app/api/authAPI";
 
 const SignUp = () => {
     const [form, setForm] = useState({

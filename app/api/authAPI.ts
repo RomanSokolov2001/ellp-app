@@ -1,13 +1,10 @@
 import axios from 'axios';
 import { User } from '../redux/userSlice';
+import {BACKEND_IP} from "@/config";
+import {LOGIN_ENDPOINT, QUERY_ENDPOINT, SIGNUP_ENDPOINT} from "@/constants/endpoints";
 
-const API_IP = "http://13.60.12.192:5000"
-const LOGIN_ENDPOINT = "api/members/login"
-const SIGNUP_ENDPOINT = "api/members/signup"
 
-const QUERY_ENDPOINT = "api/members/query"
-
-class AuthService {
+class AuthAPI {
 
     async login(email: string, password: string): Promise <User> {
         const dto = {
@@ -15,7 +12,7 @@ class AuthService {
             password
           };
           try {
-            const response = await axios.post(`${API_IP}/${LOGIN_ENDPOINT}`, dto);
+            const response = await axios.post(`${BACKEND_IP}/${LOGIN_ENDPOINT}`, dto);
             const isSuccessful = response.data.result === 'success';
 
             if (!isSuccessful) {
@@ -39,7 +36,7 @@ class AuthService {
             lastName
         };
         try {
-            const response = await axios.post(`${API_IP}/${SIGNUP_ENDPOINT}`, dto);
+            const response = await axios.post(`${BACKEND_IP}/${SIGNUP_ENDPOINT}`, dto);
             const isSuccessful = response.data.result === 'success';
             console.log(response.data);
             if (!isSuccessful) {
@@ -56,20 +53,23 @@ class AuthService {
 
     async checkIfUserHasSubscription(email?: string, memberId?: string): Promise<boolean> {
         try {
-            const response = await axios.get(`${API_IP}/${QUERY_ENDPOINT}`, {
+            const response = await axios.get(`${BACKEND_IP}/${QUERY_ENDPOINT}`, {
                 params: {
                     ...(email && { email }),
                     ...(memberId && { memberId })
                 }
             });
             const isUserExists = response && response.data.result === 'success';
-            const isUserHasSubscription = isUserExists && response.data.member_data.account_state === 'active';
+            const isUserHasSubscription = isUserExists && response.data.data.data.accountState === 'active';
 
             if (!isUserExists) {
                 throw Error(`No user: ${email}${memberId}`);
             }
+            // TODO fix API
+            console.log(response.data.data.data.accountState);
             if (!isUserHasSubscription) {
-                throw Error(`Your account is not active. Account state: ${response.data.member_data.account_state}`);
+                // Account state: ${response.data.accountState}
+                throw Error(`Your account is not active. `);
             }
             return true;
 
@@ -80,4 +80,4 @@ class AuthService {
     };
 }
 
-export const authService = new AuthService();
+export const authService = new AuthAPI();

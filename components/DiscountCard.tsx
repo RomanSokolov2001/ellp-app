@@ -22,14 +22,14 @@ type DiscountCardProps = {
 };
 
 const DiscountCard: React.FC<DiscountCardProps> = ({
-  imageUrl,
-  location,
-  title,
-  discount,
-  onPress,
-  onToggleFavorite,
-  isFavorite,
-}) => {
+                                                     imageUrl,
+                                                     location,
+                                                     title,
+                                                     discount,
+                                                     onPress,
+                                                     onToggleFavorite,
+                                                     isFavorite,
+                                                   }) => {
   const [favorite, setFavorite] = useState(isFavorite);
 
   const toggleFavorite = () => {
@@ -45,114 +45,94 @@ const DiscountCard: React.FC<DiscountCardProps> = ({
   const resolvedImage = images[imageUrl];
 
   return (
-    <View style={styles.card}>
-      {/* Image Background */}
-      <ImageBackground
-        source={resolvedImage}
-        style={styles.image}
-        imageStyle={{ borderTopLeftRadius: 12, borderTopRightRadius: 12 }}
-      />
+      <View style={styles.card}>
+        <ImageBackground
+            source={{ uri: imageUrl }}
+            style={styles.image}
+        >
+          <View style={styles.content}>
+            <Text style={styles.title}>{title}</Text>
 
-      {/* Content below the image */}
-      <View style={styles.content}>
-        {/* Location and Heart Icon */}
-        <View style={styles.header}>
-          <Text style={styles.location}>{location}</Text>
-          <TouchableOpacity onPress={() => toggleFavorite()}>
-            <FontAwesome
-              name={favorite ? "heart" : "heart-o"}
-              size={20}
-              color={favorite ? "red" : "black"}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Title and Discount */}
-        <Text style={styles.title}>{title}</Text>
-        <View style={styles.discountRow}>
-          <FontAwesome
-            name="percent"
-            size={16}
-            color="black"
-            style={styles.icon}
-          />
-          <Text style={styles.discountText}>{discount}</Text>
-        </View>
-
-        {/* Button */}
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text style={styles.buttonText}>Details</Text>
-        </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={onPress}>
+              <Text style={styles.buttonText}>View discount</Text>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
       </View>
-    </View>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    margin: 16,
-    borderRadius: 12,
-    overflow: "hidden",
+    width: "100%",
+    height: 400,
+    marginBottom: 16,
+    borderRadius: 16,
     backgroundColor: colors.white,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+    overflow: "hidden",
   },
-  image: {
-    height: 120,
+  image:{
     width: "100%",
-    backgroundColor: "#e0e0e0",
+    height: "100%",
+    display: "flex",
+    justifyContent: "flex-end",
   },
   content: {
-    padding: 12,
+    padding: 16,
+    backgroundColor: "#ffff",
   },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  location: {
+  date: {
     fontSize: 12,
-    width: "80%",
     color: colors.btm_nav_unselected,
+    marginBottom: 4,
     fontFamily: "Lexend-Regular",
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: "bold",
     fontFamily: "Lexend-Regular",
-    color: "#333",
-    marginBottom: 4,
-  },
-  discountRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  icon: {
-    marginRight: 4,
-  },
-  discountText: {
-    fontSize: 14,
-    color: colors.btm_nav_unselected,
-    marginRight: 12,
-    marginLeft: 4,
-    fontFamily: "Lexend-Regular",
+    color: colors.text,
   },
   button: {
-    alignSelf: "flex-start",
     backgroundColor: colors.secondary,
     paddingVertical: 6,
     paddingHorizontal: 14,
-    borderRadius: 20,
-    marginTop: 2,
+    borderRadius: 16,
+    alignSelf: "flex-start",
+    width: "100%",
+    alignItems: "center",
   },
   buttonText: {
     color: colors.white,
     fontFamily: "Lexend-Medium",
     fontSize: 14,
+  },
+  sold: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    backgroundColor: "red",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  soldText: {
+    color: colors.white,
+    fontWeight: "bold",
+    fontSize: 14,
+    fontFamily: "Lexend-Regular",
   },
 });
 

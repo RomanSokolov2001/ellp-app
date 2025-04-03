@@ -7,7 +7,7 @@ import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import { Link } from "expo-router";
 import colors from "@/assets/colors/colors";
-import { authService } from "../services/authService";
+import { authService } from "@/app/api/authAPI";
 import { User } from "../redux/userSlice";
 import {useDispatch, useSelector} from "react-redux"; // Import useDispatch to dispatch the setUser action
 import { setUser } from "../redux/userSlice";

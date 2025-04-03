@@ -8,19 +8,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import RootStackParamList from "@/app/types/Navigation";
 import LoadingScreen from "@/components/LoadingScreen";
+import stripHtml from "@/app/services/stripHTML";
+import getMetaValue from "@/app/services/getMetaValue";
 
 type EventsScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "EventsScreen"
+    RootStackParamList,
+    "EventsScreen"
 >;
 
 export interface EventData {
   id: string;
-  imageUrl: string;
+  imageUrl: any;
   location: string;
   date: string;
-  description: string;
-  title: string;
+  description: any;
+  title: any;
   startTime: string;
   endTime?: string;
   discount?: string;
@@ -28,6 +30,7 @@ export interface EventData {
   priceMembers?: string;
   contact?: string;
   webPageUrl?: string;
+  stock?: string;
 }
 
 const EventsScreen: React.FC = () => {
@@ -39,23 +42,30 @@ const EventsScreen: React.FC = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const eventsCollection = collection(firestoreDb, "events");
-        const eventsSnapshot = await getDocs(eventsCollection);
-        const eventsData = eventsSnapshot.docs.map((doc) => {
-          const data = doc.data() as EventData;
-          return {
-            ...data,
-            id: doc.id,
-          };
-        });
+
+        const response = await fetch('https://erasmuslifelaspalmas.com/wp-json/custom/v1/events');
+        const data = await response.json();
+        const eventsData = data.map((event: any) => ({
+          id: event.id.toString(),
+          title: event.name,
+          description: stripHtml(event.description),
+          price: event.price,
+          webPageUrl: event.permalink,
+          imageUrl: event.images[0].src,
+          date: getMetaValue(event, "event_date"),
+          location: getMetaValue(event, "event_location"),
+          stock: event.stock_quantity as String,
+        }));
+
         setEvents(eventsData);
-      } catch (error) {
+      }
+      catch (error) {
         console.error("Error fetching events:", error);
-      } finally {
+      }
+      finally {
         setLoading(false);
       }
     };
-
     fetchEvents();
   }, []);
 
@@ -68,33 +78,33 @@ const EventsScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <FlatList
-          data={events}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <EventCard
-              imageUrl={item.imageUrl}
-              location={item.location}
-              description={item.description}
-              date={item.date}
-              title={item.title}
-              onPress={() => handlePress(item)}
-            />
-          )}
+            contentContainerStyle={styles.list}
+            data={events}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+                <EventCard
+                    imageUrl={item.imageUrl}
+                    location={item.location}
+                    description={item.description}
+                    date={item.date}
+                    title={item.title}
+                    onPress={() => handlePress(item)}
+                    stock={item.stock ? parseInt(item.stock) : 0}
+                />
+            )}
         />
       </SafeAreaView>
-    </View>
   );
 };
 
+export default EventsScreen;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  list: {
+    width: "100%",
     padding: 16,
   },
 });
-
-export default EventsScreen;

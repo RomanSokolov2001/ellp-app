@@ -14,7 +14,7 @@ import {database} from "@/firebaseConfig";
 import {usePreventScreenCapture} from "expo-screen-capture";
 import {useSelector} from "react-redux";
 import {RootState} from "@/app/redux/store";
-import {authService} from "@/app/services/authService";
+import {authService} from "@/app/api/authAPI";
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -43,7 +43,7 @@ const Membership = () => {
                 setSubscription(isSubscriptionActive)
             } catch (err) {
                 setSubscription(false)
-                Alert.alert((err as Error).message);
+                // Alert.alert((err as Error).message);
             }
             setLoading(false);
         }

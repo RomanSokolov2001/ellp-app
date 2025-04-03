@@ -1,208 +1,206 @@
-import { View, Text, TouchableOpacity, TextInput } from "react-native";
-import colors from "@/assets/colors/colors";
-import { StyleSheet } from "react-native";
-import { useEffect, useState } from "react";
-import { getAuth } from "firebase/auth";
-import { onValue, ref, update } from "firebase/database";
-import { database } from "@/firebaseConfig";
+import {serverAPI} from "@/app/api/serverAPI";
+import {useEffect, useState} from "react";
+import {CardField, useStripe} from "@stripe/stripe-react-native";
+import {useSelector} from "react-redux";
+import {RootState} from "@/app/redux/store";
+import {Alert, Button, StyleSheet, TextInput, TouchableOpacity, Text, View} from "react-native";
 import SimpleAlert from "@/components/SimpleAlert";
+import colors from "@/assets/colors/colors";
 
-const PaymentScreen = () => {
-  const [userData, setUserData] = useState<any>(null);
-  const [simpleAlertVisible, setSimpleAlertVisible] = useState(false);
-  const [simpleAlertContent, setSimpleAlertContent] = useState({
-    title: "",
-    message: "",
-  });
+export default function CheckoutScreen() {
+    const user = useSelector((state: RootState) => state.userSlice.user);
+    const { initPaymentSheet, presentPaymentSheet } = useStripe();
+    const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
+    const fetchPaymentSheetParams = async () => {
+        const clientSecret = await serverAPI.receiveIntent(user.jwt);
+        const ephemeralKey = 123
+        const customer = user.email;
 
-    if (currentUser) {
-      const userRef = ref(database, `users/${currentUser.uid}`);
-      const unsubscribe = onValue(userRef, (snapshot) => {
-        if (snapshot.exists()) {
-          setUserData(snapshot.val());
+        return {
+            clientSecret,
+            ephemeralKey,
+            customer,
+        };
+    };
+
+    const initializePaymentSheet = async () => {
+        const {
+            clientSecret,
+            ephemeralKey,
+            customer,
+        } = await fetchPaymentSheetParams();
+
+        const { error } = await initPaymentSheet({
+            merchantDisplayName: "Example, Inc.",
+            returnURL: 'your-app://stripe-redirect',
+            customerId: customer,
+            // @ts-ignore
+            customerEphemeralKeySecret: ephemeralKey,
+            // @ts-ignore
+            paymentIntentClientSecret: clientSecret,
+            // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
+            //methods that complete payment after a delay, like SEPA Debit and Sofort.
+            allowsDelayedPaymentMethods: true,
+            defaultBillingDetails: {
+                name: 'Jane Doe',
+            }
+        });
+        if (!error) {
+            setLoading(true);
         } else {
-          setUserData(null);
+            console.error(error.message);
         }
-      });
+    };
 
-      // Clean up listener when the component unmounts
-      return () => unsubscribe();
-    }
-  }, []);
+    const openPaymentSheet = async () => {
+        const { error } = await presentPaymentSheet();
 
-  const handlePayment = async () => {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
+        if (error) {
+            Alert.alert(`Error code: ${error.code}`, error.message);
+        } else {
+            Alert.alert('Success', 'Your order is confirmed!');
+        }
+    };
 
-    if (currentUser) {
-      const currentDate = new Date();
-      const expiryDate = new Date();
-      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    useEffect(() => {
+        initializePaymentSheet();
+    }, []);
 
-      const formattedExpiryDate = expiryDate.toISOString().split("T")[0];
+    return (
+        <View style={{flex: 1}}>
+            <View style={styles.container}>
+                <Text style={styles.headerText}>Pay with Card</Text>
 
-      const useRef = ref(database, `users/${currentUser.uid}/membership`);
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
 
-      try {
-        await update(useRef, {
-          hasMembership: true,
-          expiryDate: formattedExpiryDate,
-          membershipStatus: "active",
-        });
-        setSimpleAlertContent({
-          title: "Success",
-          message: "Payment successful",
-        });
-        setSimpleAlertVisible(true);
-      } catch (error) {
-        setSimpleAlertContent({
-          title: "Error",
-          message: "Payment failed. Please try again later.",
-        });
-        setSimpleAlertVisible(true);
-      }
-    } else {
-      setSimpleAlertContent({
-        title: "Error",
-        message: "User not logged in. Please sign in to proceed.",
-      });
-      setSimpleAlertVisible(true);
-    }
-  };
+                <Text style={styles.sectionTitle}>Card Information</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="1234 1234 1234 1234"
+                  keyboardType="numeric"
+                />
+                <View style={styles.cardInfoContainer}>
+                  <TextInput
+                    style={[styles.input, styles.cardInfoInput]}
+                    placeholder="MM/YY"
+                    keyboardType="numeric"
+                  />
+                  <TextInput
+                    style={[styles.input, styles.cardInfoInput]}
+                    placeholder="CVC"
+                    keyboardType="numeric"
+                  />
+                </View>
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.headerText}>Pay with Card</Text>
+                <TextInput style={styles.input} placeholder="Full name on card" />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
 
-      <Text style={styles.sectionTitle}>Card Information</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="1234 1234 1234 1234"
-        keyboardType="numeric"
-      />
-      <View style={styles.cardInfoContainer}>
-        <TextInput
-          style={[styles.input, styles.cardInfoInput]}
-          placeholder="MM/YY"
-          keyboardType="numeric"
-        />
-        <TextInput
-          style={[styles.input, styles.cardInfoInput]}
-          placeholder="CVC"
-          keyboardType="numeric"
-        />
-      </View>
+                <Text style={styles.confirmationText}>
+                  By confirming your subscription, you allow Erasmus Life Las Palmas to
+                  charge you for future payments in accordance with their terms. You can
+                  always cancel your subscription.
+                </Text>
+                <CardField
+                    postalCodeEnabled={false}
+                />
 
-      <TextInput style={styles.input} placeholder="Full name on card" />
-
-      <TouchableOpacity style={styles.payButton} onPress={handlePayment}>
-        <Text style={styles.payButtonText}>PAY</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.confirmationText}>
-        By confirming your subscription, you allow Erasmus Life Las Palmas to
-        charge you for future payments in accordance with their terms. You can
-        always cancel your subscription.
-      </Text>
-
-      <SimpleAlert
-        visible={simpleAlertVisible}
-        onClose={() => setSimpleAlertVisible(false)}
-        title={simpleAlertContent.title}
-        message={simpleAlertContent.message}
-      />
-    </View>
-  );
-};
-
+                {/*<SimpleAlert*/}
+                {/*    visible={simpleAlertVisible}*/}
+                {/*    onClose={() => setSimpleAlertVisible(false)}*/}
+                {/*    title={simpleAlertContent.title}*/}
+                {/*    message={simpleAlertContent.message}*/}
+                {/*/>*/}
+            </View>
+            );
+            <Button
+                disabled={!loading}
+                title="Checkout"
+                onPress={openPaymentSheet}
+            />
+        </View>
+    );
+}
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: colors.white,
-    paddingTop: 10,
-  },
-  headerText: {
-    fontSize: 24,
-    fontFamily: "Lexend-Medium",
-    color: colors.text,
-    marginBottom: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.grey_border,
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 15,
-    color: colors.grey_border,
-    fontFamily: "Lexend-Light",
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontFamily: "Lexend-Light",
-    color: colors.text,
-    marginBottom: 8,
-  },
-  cardInfoContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  cardInfoInput: {
-    flex: 1,
-    marginRight: 10,
-  },
-  payButton: {
-    backgroundColor: colors.pay_button,
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  payButtonText: {
-    color: colors.white,
-    fontSize: 18,
-    fontFamily: "Lexend-Medium",
-  },
-  confirmationText: {
-    fontSize: 14,
-    color: colors.text,
-    fontFamily: "Lexend-Light",
-    textAlign: "center",
-    marginTop: 20,
-  },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: colors.white,
+        paddingTop: 10,
+    },
+    headerText: {
+        fontSize: 24,
+        fontFamily: "Lexend-Medium",
+        color: colors.text,
+        marginBottom: 20,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: colors.grey_border,
+        borderRadius: 8,
+        padding: 12,
+        fontSize: 16,
+        marginBottom: 15,
+        color: colors.grey_border,
+        fontFamily: "Lexend-Light",
+    },
+    sectionTitle: {
+        fontSize: 16,
+        fontFamily: "Lexend-Light",
+        color: colors.text,
+        marginBottom: 8,
+    },
+    cardInfoContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+    cardInfoInput: {
+        flex: 1,
+        marginRight: 10,
+    },
+    payButton: {
+        backgroundColor: colors.pay_button,
+        paddingVertical: 15,
+        borderRadius: 8,
+        alignItems: "center",
+        marginTop: 20,
+    },
+    payButtonText: {
+        color: colors.white,
+        fontSize: 18,
+        fontFamily: "Lexend-Medium",
+    },
+    confirmationText: {
+        fontSize: 14,
+        color: colors.text,
+        fontFamily: "Lexend-Light",
+        textAlign: "center",
+        marginTop: 20,
+    },
 });
 
 const pickerSelectStyles = StyleSheet.create({
-  inputIOS: {
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: "#000",
-    marginBottom: 15,
-  },
-  inputAndroid: {
-    borderWidth: 1,
-    borderColor: "#E5E5E5",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: "#000",
-    marginBottom: 15,
-  },
+    inputIOS: {
+        borderWidth: 1,
+        borderColor: "#E5E5E5",
+        borderRadius: 8,
+        padding: 12,
+        fontSize: 16,
+        color: "#000",
+        marginBottom: 15,
+    },
+    inputAndroid: {
+        borderWidth: 1,
+        borderColor: "#E5E5E5",
+        borderRadius: 8,
+        padding: 12,
+        fontSize: 16,
+        color: "#000",
+        marginBottom: 15,
+    },
 });
-
-export default PaymentScreen;

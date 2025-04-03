@@ -19,59 +19,53 @@ const categories = [
 ];
 
 const FilteringTabs: React.FC<FilteringTabsProps> = ({
-  selectedCategory,
-  onCategoryChange,
-}) => {
+                                                       selectedCategory,
+                                                       onCategoryChange,
+                                                     }) => {
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={styles.srollView}
-    >
-      {categories.map((category) => (
-        <TouchableOpacity
-          key={category.name}
-          style={[
-            styles.tab,
-            {
-              backgroundColor: category.color,
-              ...(selectedCategory === category.name && styles.selectedTab),
-            },
-          ]}
-          onPress={() => onCategoryChange(category.name)} // Call the callback here
-        >
-          <Text style={styles.tabText}>{category.name}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+      <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.srollView}
+      >
+        {categories.map((category) => (
+            <TouchableOpacity
+                key={category.name}
+                style={[
+                  styles.tab,
+                  {
+                    backgroundColor: category.color,
+                    ...(selectedCategory === category.name && styles.selectedTab),
+                  },
+                ]}
+                onPress={() => onCategoryChange(category.name)} // Call the callback here
+            >
+              <Text style={styles.tabText}>{category.name}</Text>
+            </TouchableOpacity>
+        ))}
+      </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   srollView: {
-    marginVertical: 30,
-    marginHorizontal: 20,
+    paddingVertical: 16,
   },
   tab: {
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-    marginHorizontal: 10,
-    marginVertical: 1,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 16,
+    marginRight: 10,
     alignItems: "center",
     justifyContent: "center",
   },
   tabText: {
     color: colors.white,
+    fontSize: 16,
     fontFamily: "Lexend-Light",
   },
   selectedTab: {
-    transform: [{ scale: 1.1 }],
-    elevation: 4,
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 }, // Shadow for iOS
-    shadowOpacity: 0.85,
-    shadowRadius: 3.84,
   },
 });
 
