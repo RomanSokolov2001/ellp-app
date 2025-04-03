@@ -31,14 +31,12 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
   //   );
   // };
 
-  const resolvedImage = images[discount.imageUrl];
-
   return (
     <ScrollView style={{ backgroundColor: colors.white }}>
       <View style={styles.container}>
         {/* Logo of the collaborator */}
         <ImageBackground
-          source={discount.imageUrl}
+          source={{uri: discount.imageUrl}}
           style={styles.discountLogo}
           imageStyle={{ borderRadius: 30, resizeMode: "cover" }}
         />
@@ -65,7 +63,7 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
           </View>
           <View style={styles.infoColumnContainer}>
             <Text style={styles.infoTextMain}>{discount.discount}</Text>
-            <Text style={styles.infoText}>With the ELLP Membership</Text>
+            <Text style={styles.infoText}>*With the ELLP Membership</Text>
           </View>
         </View>
 
