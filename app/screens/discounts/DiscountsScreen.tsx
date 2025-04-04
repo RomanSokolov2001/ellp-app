@@ -26,7 +26,7 @@ export interface DiscountData {
   location: string;
   title: string;
   discount: string;
-  category: string;
+  industry: string;
   locationPostalCode: string;
   locationStreet: string;
   locationCity: string;
