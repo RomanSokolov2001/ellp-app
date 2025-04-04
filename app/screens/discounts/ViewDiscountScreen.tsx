@@ -1,12 +1,14 @@
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   ImageBackground,
+  Image,
   Linking,
   Text,
   TouchableOpacity,
   View,
   ScrollView,
   StyleSheet,
+  Dimensions,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "@/assets/colors/colors";
@@ -31,14 +33,33 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
   //   );
   // };
 
+  // Get the image height based on the screen width
+  const screenWidth = Dimensions.get("window").width;
+  const [imageHeight, setImageHeight] = useState(200);
+
+  useEffect(() => {
+      if (discount.imageUrl) {
+        Image.getSize(
+          discount.imageUrl,
+          (width, height) => {
+            const ratio = height / width;
+            setImageHeight(screenWidth * ratio);
+          },
+          (error) => {
+            console.error("Image load error:", error);
+          }
+        );
+      }
+    }, [discount.imageUrl]);
+
   return (
     <ScrollView style={{ backgroundColor: colors.white }}>
       <View style={styles.container}>
         {/* Logo of the collaborator */}
-        <ImageBackground
-          source={{uri: discount.imageUrl}}
-          style={styles.discountLogo}
-          imageStyle={{ borderRadius: 30, resizeMode: "cover" }}
+        <Image
+          source={{ uri: discount.imageUrl }}
+          style={{ width: "100%", height: imageHeight }}
+          resizeMode="contain"
         />
 
         <Text style={styles.title}>{discount.title}</Text>
