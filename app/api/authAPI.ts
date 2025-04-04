@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { User } from '../redux/userSlice';
+import {User} from '../redux/userSlice';
 import {BACKEND_IP} from "@/config";
 import {LOGIN_ENDPOINT, QUERY_ENDPOINT, SIGNUP_ENDPOINT} from "@/constants/endpoints";
 
@@ -12,7 +12,7 @@ class AuthAPI {
             password
           };
           try {
-            const response = await axios.post(`${BACKEND_IP}/${LOGIN_ENDPOINT}`, dto);
+            const response = await axios.post(`${BACKEND_IP}${LOGIN_ENDPOINT}`, dto);
             const isSuccessful = response.data.result === 'success';
 
             if (!isSuccessful) {
@@ -36,15 +36,14 @@ class AuthAPI {
             lastName
         };
         try {
-            const response = await axios.post(`${BACKEND_IP}/${SIGNUP_ENDPOINT}`, dto);
+            const response = await axios.post(`${BACKEND_IP}${SIGNUP_ENDPOINT}`, dto);
             const isSuccessful = response.data.result === 'success';
             console.log(response.data);
             if (!isSuccessful) {
                 throw Error(response.data.message)
             }
 
-            const userObject = response.data.data;
-            return userObject;
+            return response.data.data;
         } catch (err) {
             console.error(`@AuthService login: could not login: ${(err as Error).message}`)
             throw Error((err as Error).message);
@@ -53,7 +52,7 @@ class AuthAPI {
 
     async checkIfUserHasSubscription(email?: string, memberId?: string): Promise<boolean> {
         try {
-            const response = await axios.get(`${BACKEND_IP}/${QUERY_ENDPOINT}`, {
+            const response = await axios.get(`${BACKEND_IP}${QUERY_ENDPOINT}`, {
                 params: {
                     ...(email && { email }),
                     ...(memberId && { memberId })

@@ -7,7 +7,7 @@ class ServerAPI {
 
     async receiveIntent(jwt: string): Promise<string | null> {
         try {
-            const response = await axios.get(`${BACKEND_IP}/${GET_INTENT_ENDPOINT}`, {
+            const response = await axios.get(`${BACKEND_IP}${GET_INTENT_ENDPOINT}`, {
                 params: { jwt }
             });
 

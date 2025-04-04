@@ -1,1 +1,1 @@
-export const BACKEND_IP = "http://51.21.246.83";
+export const BACKEND_IP = "https://www.storygen.xyz";
