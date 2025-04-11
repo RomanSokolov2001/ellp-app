@@ -42,9 +42,11 @@ const EventsScreen: React.FC = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-
+        // console.log('START FETCHING EVENTS...');
         const response = await fetch('https://erasmuslifelaspalmas.com/wp-json/custom/v1/events');
         const data = await response.json();
+        // console.log('LOGGING THE EVENTS')
+        // console.log(data);
         const eventsData = data.map((event: any) => ({
           id: event.id.toString(),
           title: event.name,

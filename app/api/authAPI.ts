@@ -12,14 +12,16 @@ class AuthAPI {
             password
           };
           try {
+            console.log("LOGIN ENDPOINT:");
+            console.log(`${BACKEND_IP}${LOGIN_ENDPOINT}`);
             const response = await axios.post(`${BACKEND_IP}${LOGIN_ENDPOINT}`, dto);
             const isSuccessful = response.data.result === 'success';
 
             if (!isSuccessful) {
               throw Error(response.data.message)
             };
-
             const userObject = response.data.data;
+            console.log(userObject);
             return userObject;
           } catch (err) {
             console.error(`@AuthService login: could not login: ${(err as Error).message}`)
@@ -58,14 +60,15 @@ class AuthAPI {
                     ...(memberId && { memberId })
                 }
             });
+            console.log(response);
             const isUserExists = response && response.data.result === 'success';
-            const isUserHasSubscription = isUserExists && response.data.data.data.accountState === 'active';
+            const isUserHasSubscription = isUserExists && response.data.data.accountState === 'active';
 
             if (!isUserExists) {
                 throw Error(`No user: ${email}${memberId}`);
             }
             // TODO fix API
-            console.log(response.data.data.data.accountState);
+            console.log(response.data.data.accountState);
             if (!isUserHasSubscription) {
                 // Account state: ${response.data.accountState}
                 throw Error(`Your account is not active. `);

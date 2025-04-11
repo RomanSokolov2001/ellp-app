@@ -66,11 +66,15 @@ const SignIn = () => {
             value={form.email}
             handleChangeText={(e: string) => setForm({ ...form, email: e })}
             keyboardType="email-address"
+            autoCapitalize="none"
+            textContentType="emailAddress"
           />
 
           <FormField
             title="Password"
             placeholder="Password"
+            textContentType="password"
+            secureTextEntry={true}
             value={form.password}
             handleChangeText={(e: string) => setForm({ ...form, password: e })}
           />
