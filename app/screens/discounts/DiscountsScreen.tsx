@@ -88,35 +88,54 @@ const Discounts = () => {
   const navigation = useNavigation<DiscountsScreenNavigationProp>();
 
   //load discounts from wp api
+  const pageSize = 10;
+  const [pageCount, setPageCount] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);  // loading flag for pagination, doesn't trigger the loader icon
+  const [allFetched, setAllFetched] = useState(false);
+
   useEffect(() => {
       const fetchEvents = async () => {
         try {
           setLoading(true);
+          setLoadingMore(true);
 
-          // Fetch data from the WordPress API, set to 100 atm because default is 10. Pagination should be implemented in the future.
-          const response = await fetch('https://erasmuslifelaspalmas.com/wp-json/wp/v2/posts?categories=21&per_page=100&_embed');
+          // Fetch data from the WordPress API
+          const response = await fetch(`https://erasmuslifelaspalmas.com/wp-json/wp/v2/posts?categories=21&per_page=${pageSize}&page=${pageCount}&_embed`);
           const data = await response.json();
           const discountsData = data.map((discount: any) => ({
             id: discount.id.toString(),
             title: discount.title.rendered,
-            description: stripHtml(discount.content.rendered),
+            industry: discount.acf.industry ? discount.acf.industry : "",
             imageUrl: discount._embedded["wp:featuredmedia"][0].source_url,
             location: discount.acf.location ? discount.acf.location : "",
             discount: discount.acf.discount ? discount.acf.discount : "",
-            industry: discount.acf.industry ? discount.acf.industry : "",
+            description: stripHtml(discount.content.rendered),
           }));
 
-          setDiscounts(discountsData);
+          // Append new discounts to the existing state in case of pagination
+          setDiscounts(prev => [...prev, ...discountsData]);
+
+          // Check if all data has been fetched
+          if (discountsData.length < pageSize) {
+            setAllFetched(true);
+          }
         }
         catch (error) {
           console.error("Error fetching events:", error);
         }
         finally {
           setLoading(false);
+          setLoadingMore(false);
         }
       };
       fetchEvents();
-    }, []);
+  }, [pageCount]);
+
+  function handleLoadMore(){
+    if (!loadingMore && !allFetched) {
+      setPageCount(prev => prev + 1);
+    }
+  };
 
   // Toggle favorite discount (add/remove from likedDiscounts in Realtime DB)
   const toggleFavourite = async (discountId: string) => {
@@ -159,7 +178,7 @@ const Discounts = () => {
   };
 
   //if (loading || loadingFavorites)
-  if (loading) {
+  if (loading && pageCount === 1) {
     return <LoadingScreen />;
   }
 
@@ -175,6 +194,8 @@ const Discounts = () => {
       <FlatList
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
         data={discounts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -188,6 +209,10 @@ const Discounts = () => {
             onToggleFavorite={() => toggleFavourite(item.id)}
           />
         )}
+
+        ListFooterComponent={
+          loadingMore ? <ActivityIndicator size="large" color={colors.primary} /> : null
+        }
       />
     </SafeAreaView>
   );
