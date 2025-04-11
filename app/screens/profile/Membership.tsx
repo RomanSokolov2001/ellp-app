@@ -15,6 +15,8 @@ import {usePreventScreenCapture} from "expo-screen-capture";
 import {useSelector} from "react-redux";
 import {RootState} from "@/app/redux/store";
 import {authService} from "@/app/api/authAPI";
+import QRCodeComponent from "@/components/Profile/QRCodeComponent";
+
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -55,7 +57,7 @@ const Membership = () => {
     return (
         <View style={{flex: 1, backgroundColor: colors.white, justifyContent: 'center', alignItems: 'center'}}>
             <ScrollView contentContainerStyle={{ justifyContent: 'center', alignItems: 'center', width: '80%', gap: 8}}>
-                <View
+                {/* <View
                     style={{
                         width: 100,
                         height: 100,
@@ -76,6 +78,9 @@ const Membership = () => {
                     ) : (
                         <Ionicons name="person" size={50} color={colors.text}/>
                     )}
+                </View> */}
+                <View>
+                    <QRCodeComponent email={userData?.email}></QRCodeComponent>
                 </View>
                 <Text
                     style={{fontFamily: "Lexend-Medium", fontSize: 20}}
