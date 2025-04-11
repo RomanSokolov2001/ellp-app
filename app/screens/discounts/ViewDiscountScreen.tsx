@@ -1,19 +1,17 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import {
-  ImageBackground,
   Image,
-  Linking,
   Text,
-  TouchableOpacity,
   View,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   Dimensions,
+  Linking,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "@/assets/colors/colors";
 import RootStackParamList from "@/app/types/Navigation";
-import images from "@/utils/imageMapping";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 type Props = NativeStackScreenProps<RootStackParamList, "ViewDiscountScreen">;
@@ -27,16 +25,9 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
     });
   }, [navigation]);
 
-  // const handleOpenMaps = () => {
-  //   Linking.openURL(discount.mapsUrl).catch((err) =>
-  //     console.error("Failed to open maps URL:", err)
-  //   );
-  // };
-
   // Get the image height based on the screen width
   const screenWidth = Dimensions.get("window").width;
   const [imageHeight, setImageHeight] = useState(200);
-
   useEffect(() => {
       if (discount.imageUrl) {
         Image.getSize(
@@ -50,68 +41,72 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
           }
         );
       }
-    }, [discount.imageUrl]);
+  }, [discount.imageUrl]);
 
   return (
     <ScrollView style={{ backgroundColor: colors.white }}>
       <View style={styles.container}>
-        {/* Logo of the collaborator */}
-        <Image
-          source={{ uri: discount.imageUrl }}
-          style={{ width: "100%", height: imageHeight }}
-          resizeMode="contain"
-        />
-
-        <Text style={styles.title}>{discount.title}</Text>
-        <View style={styles.categoryContainer}>
+        {/* Header */}
+        <View style={styles.previewHeader}>
+          <Text style={styles.title}>{discount.title}</Text>
           <Text style={styles.category}>{discount.industry}</Text>
         </View>
-        <View style={styles.rowInfoContainer}>
-          <View style={styles.iconContainer}>
-            <MaterialIcons
-              name="location-on"
-              size={28}
-              color={colors.secondary}
-            />
-          </View>
-          <View style={styles.infoColumnContainer}>
-            <Text style={styles.infoTextMain}>{discount.location}</Text>
-          </View>
+
+        {/* Logo of the collaborator */}
+        <View>
+          <Image
+            source={{ uri: discount.imageUrl }}
+            style={ [styles.imagePreview, {height: imageHeight}] }
+          />
         </View>
-        <View style={styles.rowInfoContainer}>
-          <View style={styles.iconContainer}>
+
+        <TouchableOpacity
+        onPress={() => {
+          const locationQuery = encodeURIComponent(discount.location);
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${locationQuery}`;
+          Linking.openURL(mapsUrl).catch((err) =>
+            console.error("Failed to open maps URL:", err)
+          );
+        }}
+        >
+          <View style={styles.singleInfo}>
+            <View style={styles.iconCircle}>
+              <MaterialIcons
+                name="location-on"
+                size={28}
+                color={colors.secondary}
+              />
+            </View>
+
+            <View style={styles.infoTextContainer}>
+              <Text style={[styles.infoTextMain, { color: colors.primary }]}>
+                {discount.location}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.singleInfo}>
+          <View style={styles.iconCircle}>
             <MaterialIcons name="percent" size={28} color={colors.secondary} />
           </View>
-          <View style={styles.infoColumnContainer}>
+
+          <View style={styles.infoTextContainer}>
             <Text style={styles.infoTextMain}>{discount.discount}</Text>
             <Text style={styles.infoText}>*With the ELLP Membership</Text>
           </View>
         </View>
 
-        {/* Map */}
-        <TouchableOpacity>  {/*onPress={handleOpenMaps}*/}
-          <View style={styles.rowInfoContainer}>
-            <View style={styles.iconContainer}>
-              <MaterialIcons name="map" size={28} color={colors.secondary} />
-            </View>
-            <View style={styles.infoColumnContainer}>
-              <Text style={styles.infoTextMain}>Check where it is!</Text>
-              <Text style={styles.infoText}>Open in Maps</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        {/* Extra info */}
-        
+        {/* Membership reminder */}
         <View style={styles.extraInfoContainer}>
           <Text style={{ textAlign: "left", fontSize: 15 }}>
             Don't have a membership card yet? Sign up today and start enjoying these exclusive benefits at our partner location!
           </Text>
+
           <TouchableOpacity onPress={() => navigation.navigate("JoinUs")}>
             <Text style={styles.link}>Join us here!</Text>
           </TouchableOpacity>
         </View>
-
       </View>
     </ScrollView>
   );
@@ -123,71 +118,63 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
+    gap: 16,
+    backgroundColor: colors.white,
   },
-  discountLogo: {
-    width: "100%",
-    height: 180,
-    borderRadius: 30,
-    alignSelf: "center",
-    marginTop: 32,
-    justifyContent: "center",
+  previewHeader: {
     alignItems: "center",
-    overflow: "hidden",
+    gap: 8,
   },
   title: {
-    alignSelf: "center",
     textAlign: "center",
     fontFamily: "Lexend-SemiBold",
     fontSize: 26,
-    marginTop: 15,
-  },
-  iconContainer: {
-    padding: 12,
-    backgroundColor: colors.grey_background,
-    borderRadius: "100%",
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  rowInfoContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignContent: "center",
-    gap: 10,
-    marginBottom: 16,
-  },
-  infoColumnContainer: {
-    flex: 1,
-    width: "100%",
-    alignContent: "center",
-    justifyContent: "center",
-    gap: 4,
-  },
-  infoTextMain: {
-    width: "100%",
-    fontSize: 16,
-    fontFamily: "Lexend-Medium",
-  },
-  infoText: {
-    fontSize: 14,
-    fontFamily: "Lexend-Light",
-  },
-  categoryContainer: {
-    alignItems: "center",
-    marginBottom: 15,
   },
   category: {
     fontSize: 16,
-    paddingTop: 4,
     fontFamily: "Lexend-SemiBold",
     color: colors.primary,
   },
-  extraInfoContainer: {
-    marginTop: 10,
-    marginBottom: 20,
+  imagePreview:{
+    width: "100%",
+    borderRadius: 16,
+  },
+  singleInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  iconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.grey_background,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  infoTextContainer: {
+    flex: 1,
+  },
+  infoText: {
+    fontSize: 16,
+    fontFamily: "Lexend-ExtraLight",
+  },
+  infoTextMain: {
+    fontSize: 16,
+    fontFamily: "Lexend-Regular",
   },
   link: {
     color: colors.primary,
     fontFamily: "Lexend-SemiBold",
   },
+  description: {
+    fontSize: 16,
+    fontFamily: "Lexend-Light",
+    marginBottom: 16,
+    color: colors.text,
+  },
+  extraInfoContainer: {
+    marginTop: 10,
+    marginBottom: 20,
+  }
 });

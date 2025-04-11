@@ -22,6 +22,7 @@ export interface EventData {
   location: string;
   date: string;
   description: any;
+  category: any;
   title: any;
   startTime: string;
   endTime?: string;
@@ -55,6 +56,7 @@ const EventsScreen: React.FC = () => {
           date: getMetaValue(event, "event_date"),
           location: getMetaValue(event, "event_location"),
           stock: event.stock_quantity as String,
+          category: event.categories[0].name,
         }));
 
         setEvents(eventsData);

@@ -40,7 +40,6 @@ export default function ViewEventScreen({
   // Get the image height based on the screen width
   const screenWidth = Dimensions.get("window").width;
   const [imageHeight, setImageHeight] = useState(200);
-
   useEffect(() => {
     if (event.imageUrl) {
       Image.getSize(
@@ -58,99 +57,129 @@ export default function ViewEventScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* header */}
+      <View style={styles.previewHeader}>
+        <Text style={styles.title}>{event.title}</Text>
+        <Text style={styles.category}>{event.category}</Text>
+        
+        {/* Sold out badge */}
+        {!event.stock && (
+          <View style={styles.sold}>
+            <Text style={styles.soldText}>Sold Out</Text>
+          </View>
+        )}
+      </View>
+
       {/* Event Image */}
       <View>
         <Image
           source={{ uri: event.imageUrl }}
-          style={{ width: "100%", height: imageHeight }}
-          resizeMode="contain"
+          style={ [styles.imagePreview, {height: imageHeight}] }
         />
       </View>
-      <Text style={styles.title}>{event.title}</Text>
 
-      {/* Sold out badge */}
-      {!event.stock && (
-        <View style={styles.sold}>
-          <Text style={styles.soldText}>Sold Out</Text>
+      <View style={styles.infoContainer}>
+        {/* Event Date */}
+        {event.date && (
+        <View style={styles.singleInfo}>
+          <View style={styles.iconCircle}>
+            <MaterialIcons name="event" size={28} color={colors.secondary} />
+          </View>
+
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoTextMain}>{event.date}</Text>
+          </View>
         </View>
-      )}
+        )}
 
+        {/* Location */}
+        {event.location && (
+          <View style={styles.singleInfo}>
+          <View style={styles.iconCircle}>
+            <MaterialIcons name="place" size={28} color={colors.secondary} />
+          </View>
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoTextMain}>{event.location}</Text>
+          </View>
+        </View>
+        )}
+
+        {/* Price */}
+        <View style={styles.singleInfo}>
+          <View style={styles.iconCircle}>
+            <MaterialIcons name="euro" size={28} color={colors.secondary} />
+          </View>
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoTextMain}>{event.price} euros</Text>
+            {/* <Text style={styles.infoText}>
+              {event.priceMembers} euros for members
+            </Text> */}
+          </View>
+        </View>
+
+        {/* Webpage Info */}
+        <View style={styles.singleInfo}>
+          <View style={styles.iconCircle}>
+            <MaterialIcons name="info" size={28} color={colors.secondary} />
+          </View>
+
+          <View style={styles.infoTextContainer}>
+            <Text style={styles.infoTextMain}>
+              Buy the tickets on our <Text style={styles.link} onPress={openWebPage}>webpage</Text>
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Description */}
       <Text style={styles.description}>{event.description}</Text>
-
-      {/* Event Date */}
-      {event.date && (
-        <View style={styles.rowInfoContainer}>
-        <View style={styles.iconCircle}>
-          <MaterialIcons name="event" size={28} color={colors.secondary} />
-        </View>
-        <View style={styles.infoColumnContainer}>
-          <Text style={styles.infoTextMain}>{event.date}</Text>
-        </View>
-      </View>
-      )}
-
-      {/* Location */}
-      {event.location && (
-        <View style={styles.rowInfoContainer}>
-        <View style={styles.iconCircle}>
-          <MaterialIcons name="place" size={28} color={colors.secondary} />
-        </View>
-        <View style={styles.infoColumnContainer}>
-          <Text style={styles.infoTextMain}>{event.location}</Text>
-        </View>
-      </View>
-      )}
-
-      {/* Price */}
-      <View style={styles.rowInfoContainer}>
-        <View style={styles.iconCircle}>
-          <MaterialIcons name="euro" size={28} color={colors.secondary} />
-        </View>
-        <View style={styles.infoColumnContainer}>
-          <Text style={styles.infoTextMain}>{event.price} euros</Text>
-          {/* <Text style={styles.infoText}>
-            {event.priceMembers} euros for members
-          </Text> */}
-        </View>
-      </View>
-
-      {/* Webpage Info */}
-      <View style={styles.rowInfoContainer}>
-        <View style={styles.iconCircle}>
-          <MaterialIcons name="info" size={28} color={colors.secondary} />
-        </View>
-        <View style={styles.infoColumnContainer}>
-          <Text style={styles.infoTextMain}>
-            Buy the tickets on our <Text style={styles.linkText} onPress={openWebPage}>webpage</Text>
-          </Text>
-        </View>
-      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    backgroundColor: colors.white,
     flexGrow: 1,
+    padding: 16,
+    gap: 16,
+    backgroundColor: colors.white,
+  },
+  previewHeader: {
+    alignItems: "center",
+    gap: 8,
+  },
+  sold: {
+    backgroundColor: "red",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 16,
+  },
+  soldText: {
+    color: colors.white,
+    fontSize: 16,
+    fontFamily: "Lexend-Regular",
   },
   title: {
-    fontSize: 20,
+    textAlign: "center",
     fontFamily: "Lexend-SemiBold",
-    marginBottom: 16,
-    color: colors.text,
+    fontSize: 26,
   },
-  description: {
+  category: {
     fontSize: 16,
-    fontFamily: "Lexend-Light",
-    marginBottom: 16,
-    color: colors.text,
+    fontFamily: "Lexend-SemiBold",
+    color: colors.primary,
   },
-  rowInfoContainer: {
+  imagePreview:{
+    width: "100%",
+    borderRadius: 16,
+  },
+  infoContainer:{
+    gap: 8,
+  },
+  singleInfo: {
     flexDirection: "row",
-    margin: 6,
     alignItems: "center",
+    gap: 8,
   },
   iconCircle: {
     width: 40,
@@ -159,11 +188,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey_background,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 10,
   },
-  infoColumnContainer: {
-    width: "100%",
-    display: "flex",
+  infoTextContainer: {
+    flex: 1,
   },
   infoText: {
     fontSize: 16,
@@ -173,29 +200,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Lexend-Regular",
   },
-  linkText: {
+  link: {
     color: colors.primary,
     fontFamily: "Lexend-SemiBold",
   },
-  sold: {
-    position: "absolute",
-    top: 16,
-    right: 16,
-    backgroundColor: "red",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    zIndex: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  soldText: {
-    color: colors.white,
-    fontWeight: "bold",
-    fontSize: 14,
-    fontFamily: "Lexend-Regular",
-  },
+  description: {
+    fontSize: 16,
+    fontFamily: "Lexend-Light",
+    marginBottom: 16,
+    color: colors.text,
+  }
 });
