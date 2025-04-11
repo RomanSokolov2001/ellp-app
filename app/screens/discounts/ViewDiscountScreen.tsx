@@ -85,6 +85,25 @@ const ViewDiscountScreen = ({ route, navigation }: Props) => {
           </View>
         </TouchableOpacity>
 
+        {/* Event Description */}
+        <View 
+          style={{
+            marginTop: 30,
+          }}>
+          <Text style={styles.infoText}>
+            {discount.description}
+          </Text>
+
+          <View
+            style={{
+              borderBottomColor: 'black',
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              marginBottom: 20,
+              marginTop: 30,
+            }}
+          />
+        </View>
+
         {/* Extra info */}
         <View style={styles.extraInfoContainer}>
           <Text style={{ textAlign: "left", fontSize: 15 }}>

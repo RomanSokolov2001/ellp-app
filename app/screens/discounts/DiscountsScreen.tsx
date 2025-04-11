@@ -92,10 +92,12 @@ const Discounts = () => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-
+        // console.log('START FETCHING DISCOUNTS...')
         // Fetch data from the WordPress API, set to 100 atm because default is 10. Pagination should be implemented in the future.
         const response = await fetch('https://erasmuslifelaspalmas.com/wp-json/wp/v2/posts?categories=21&per_page=100&_embed');
         const data = await response.json();
+        // console.log('LOGGING DISCOUNTS:')
+        // console.log(data);
         const discountsData = data.map((discount: any) => ({
           id: discount.id.toString(),
           title: discount.title.rendered,
