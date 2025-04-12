@@ -121,7 +121,7 @@ const Discounts = () => {
           }
         }
         catch (error) {
-          console.error("Error fetching events:", error);
+          console.error("Error fetching discounts:", error);
         }
         finally {
           setLoading(false);
@@ -184,7 +184,7 @@ const Discounts = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-    <View style={ styles.tabsContainer}>
+      <View style={ styles.tabsContainer}>
         <FilteringTabs
           selectedCategory={selectedCategory}
           onCategoryChange={(category) => setSelectedCategory(category)}
@@ -210,9 +210,7 @@ const Discounts = () => {
           />
         )}
 
-        ListFooterComponent={
-          loadingMore ? <ActivityIndicator size="large" color={colors.primary} /> : null
-        }
+        ListFooterComponent = { loadingMore ? <ActivityIndicator size="large" color={colors.primary} /> : null }
       />
     </SafeAreaView>
   );
