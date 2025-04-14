@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { firestoreDb } from "@/firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
 import EventCard from "@/components/EventCard";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -35,19 +33,24 @@ export interface EventData {
   stock?: string;
 }
 
-const EventsScreen: React.FC = () => {
-  const [events, setEvents] = useState<EventData[]>([]);
-  const [loading, setLoading] = useState(true); // for the initial loader icon
-  const navigation = useNavigation<EventsScreenNavigationProp>();
-
-  //load discounts from wp api
+export default function EventsScreen(){
+  //pagination
   const pageSize = 10;
   const [pageCount, setPageCount] = useState(1);
-  const [loadingMore, setLoadingMore] = useState(false);  // for the pagination loader icon
-  const [allFetched, setAllFetched] = useState(false);
+  const [allFetched, setAllFetched] = useState(false); // to prevent fetching after all has been fetched
+  const [loadingMore, setLoadingMore] = useState(false);  // for the pagination loader toggle
+
+  // for the initial loader toggle
+  const [loading, setLoading] = useState(true);
+  if (loading && pageCount === 1) {
+    return <LoadingScreen />;
+  }
+
+  //fetch data from the WP API
+  const [events, setEvents] = useState<EventData[]>([]); //data
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    async function fetchEvents(){
       try {
         setLoading(true);
         setLoadingMore(true);
@@ -92,13 +95,11 @@ const EventsScreen: React.FC = () => {
     }
   };
 
+  //navigation
+  const navigation = useNavigation<EventsScreenNavigationProp>();
   const handlePress = (event: EventData) => {
     navigation.navigate("ViewEventScreen", { event });
   };
-
-  if (loading && pageCount === 1) {
-    return <LoadingScreen />;
-  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -120,14 +121,11 @@ const EventsScreen: React.FC = () => {
             stock={item.stock ? parseInt(item.stock) : 0}
           />
         )}
-
         ListFooterComponent = { loadingMore ? <ActivityIndicator size="large" color={colors.primary} /> : null }
       />
     </SafeAreaView>
   );
 };
-
-export default EventsScreen;
 
 const styles = StyleSheet.create({
   list: {
