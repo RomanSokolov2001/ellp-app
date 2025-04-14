@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EventsScreen from "../screens/events/EventsScreen";
-import ViewEventScreen from "../screens/events/ViewEventScreen";
 import RootStackParamList from "../types/Navigation";
+import ViewContentScreen from "../screens/preview/viewContentScreen";
 
 const eventsStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -14,8 +14,8 @@ export default function DiscountsStackScreen() {
         options={{ headerShown: false }}
       />
       <eventsStack.Screen
-        name="ViewEventScreen"
-        component={ViewEventScreen}
+        name="ViewContentScreen"
+        component={ViewContentScreen}
         options={{ headerShown: true, headerTitle: "" }}
       />
     </eventsStack.Navigator>

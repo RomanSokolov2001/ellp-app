@@ -1,9 +1,9 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import DiscountsScreen from "../screens/discounts/DiscountsScreen";
-import ViewDiscountScreen from "../screens/discounts/ViewDiscountScreen";
 import FavouriteDiscounts from "../screens/profile/FavouriteDiscounts";
 import RootStackParamList from "../types/Navigation";
 import JoinUs from "../screens/profile/JoinUs";
+import ViewContentScreen from "../screens/preview/viewContentScreen";
 
 const discountsStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -16,8 +16,8 @@ export default function DiscountsStackScreen() {
         options={{ headerShown: false }}
       />
       <discountsStack.Screen
-        name="ViewDiscountScreen"
-        component={ViewDiscountScreen}
+        name="ViewContentScreen"
+        component={ViewContentScreen}
         options={{ headerShown: true, headerTitle: "" }}
       />
       <discountsStack.Screen

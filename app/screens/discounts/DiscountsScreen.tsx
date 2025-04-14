@@ -1,190 +1,104 @@
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
-import DiscountCard from "@/components/DiscountCard";
+import { SafeAreaView } from "react-native-safe-area-context";
 import FilteringTabs from "@/components/FilteringTabs";
-import { useEffect, useState } from "react";
-import {
-  DocumentData,
-  QuerySnapshot,
-  collection,
-  onSnapshot,
-} from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { database } from "@/firebaseConfig";
-import { get, ref, set, update } from "firebase/database";
-import { firestoreDb } from "@/firebaseConfig";
-import { useNavigation } from "expo-router";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/commonjs/src/types";
-import RootStackParamList from "@/app/types/Navigation";
+import DiscountCard from "@/components/DiscountCard";
 import LoadingScreen from "@/components/LoadingScreen";
 import stripHtml from "@/app/services/stripHTML";
-import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "@/assets/colors/colors";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import RootStackParamList from "@/app/types/Navigation";
 
-export interface DiscountData {
-  id: string;
-  imageUrl: string;
-  location: string;
-  title: string;
-  discount: string;
-  industry: string;
-  locationPostalCode: string;
-  locationStreet: string;
-  locationCity: string;
+export class DiscountData {
+  constructor(
+    public id: string,
+    public title: string,
+    public imageUrl: string,
+    public location: string,
+    public discount: string,
+    public industry: string,
+  ) {}
 }
 
-type DiscountsScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "DiscountsScreen"
->;
-const Discounts = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [loading, setLoading] = useState(true);
-  const [discounts, setDiscounts] = useState<DiscountData[]>([]);
-  const [userId, setUserId] = useState<string>();
-  // const [loadingFavorites, setLoadingFavorites] = useState(true);
-  var [favorites, setFavorites] = useState<string[]>([]); // list of ids discounts
+export default function Discounts() {
+  //navigation for preview on card press
+  type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+  const navigation = useNavigation<NavigationProp>();
 
-  // const auth = getAuth();
-  // useEffect(() => {
-  //   setLoading(true);
+  function handlePress(discount: DiscountData) {
+    navigation.navigate("ViewContentScreen", {
+      data: discount,
+    });
+  }
 
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       setUserId(user.uid);
-  //     }
-  //     setLoading(false);
-  //   });
-
-  //   return () => unsubscribe();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!userId) return;
-
-  // const loadFavorites = async (userId: string) => {
-  //     try {
-  //       setLoading(true); // Start loading before fetching data
-
-  //       const dbRef = ref(database, `users/${userId}/likedDiscounts`);
-  //       const snapshot = await get(dbRef);
-  //       if (snapshot.exists()) {
-  //         const data = snapshot.val();
-  //         console.log("Data favorites:", Object.keys(data));
-  //         setFavorites(Object.keys(data));
-  //       } else {
-  //         setFavorites([]);
-  //       }
-  //       setLoadingFavorites(false);
-  //     } catch (error) {
-  //       console.error("Error loading favorites: ", error);
-  //     } finally {
-  //       setLoading(false);
-  //       console.log("finally favorites:", favorites);
-  //     }
-  //   };
-  //   loadFavorites(userId);
-  // }, [userId]);
-
-  const navigation = useNavigation<DiscountsScreenNavigationProp>();
-
-  //load discounts from wp api
+  //pagination
   const pageSize = 10;
   const [pageCount, setPageCount] = useState(1);
-  const [loadingMore, setLoadingMore] = useState(false);  // loading flag for pagination, doesn't trigger the loader icon
-  const [allFetched, setAllFetched] = useState(false);
+  const [allFetched, setAllFetched] = useState(false); // to prevent fetching after all has been fetched
+  const [loadingMore, setLoadingMore] = useState(false); // for the pagination loader toggle
+
+  //for the initial loader toggle
+  const [loading, setLoading] = useState(true);
+
+  //data
+  const [discounts, setDiscounts] = useState<DiscountData[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [favorites, setFavorites] = useState<string[]>([]);
+  function toggleFavourite(discountId: string) {}
 
   useEffect(() => {
-      const fetchEvents = async () => {
-        try {
-          setLoading(true);
-          setLoadingMore(true);
+    const fetchDiscounts = async () => {
+      try {
+        setLoading(true);
+        setLoadingMore(true);
 
-          // Fetch data from the WordPress API
-          const response = await fetch(`https://erasmuslifelaspalmas.com/wp-json/wp/v2/posts?categories=21&per_page=${pageSize}&page=${pageCount}&_embed`);
-          const data = await response.json();
-          const discountsData = data.map((discount: any) => ({
-            id: discount.id.toString(),
-            title: discount.title.rendered,
-            industry: discount.acf.industry ? discount.acf.industry : "",
-            imageUrl: discount._embedded["wp:featuredmedia"][0].source_url,
-            location: discount.acf.location ? discount.acf.location : "",
-            discount: discount.acf.discount ? discount.acf.discount : "",
-            description: stripHtml(discount.content.rendered),
-          }));
+        // Fetch data from the WordPress API
+        const response = await fetch(
+          `https://erasmuslifelaspalmas.com/wp-json/wp/v2/posts?categories=21&per_page=${pageSize}&page=${pageCount}&_embed`
+        );
+        const data = await response.json();
 
-          // Append new discounts to the existing state in case of pagination
-          setDiscounts(prev => [...prev, ...discountsData]);
+        const discountsData = data.map((discount: any) => new DiscountData(
+          discount.id.toString(),
+          discount.title.rendered,
+          discount._embedded["wp:featuredmedia"][0].source_url,
+          discount.acf.location || "/",
+          discount.acf.discount || "/",
+          discount.acf.industry || "/",
+        ));
 
-          // Check if all data has been fetched
-          if (discountsData.length < pageSize) {
-            setAllFetched(true);
-          }
+        // Append new discounts to the existing state in case of pagination
+        setDiscounts((prev) => [...prev, ...discountsData]);
+
+        // Check if all data has been fetched
+        if (discountsData.length < pageSize) {
+          setAllFetched(true);
         }
-        catch (error) {
-          console.error("Error fetching discounts:", error);
-        }
-        finally {
-          setLoading(false);
-          setLoadingMore(false);
-        }
-      };
-      fetchEvents();
+      } catch (error) {
+        console.error("Error fetching discounts:", error);
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    };
+    fetchDiscounts();
   }, [pageCount]);
 
-  function handleLoadMore(){
+  function handleLoadMore() {
     if (!loadingMore && !allFetched) {
-      setPageCount(prev => prev + 1);
+      setPageCount((prev) => prev + 1);
     }
-  };
+  }
 
   // Toggle favorite discount (add/remove from likedDiscounts in Realtime DB)
-  const toggleFavourite = async (discountId: string) => {
-    return;
-
-    if (!userId) {
-      console.error("User ID is undefined. Cannot toggle favorite.");
-      return;
-    }
-
-    const dbRef = ref(database, `users/${userId}/likedDiscounts`);
-    try {
-      // Fetch the latest state from Firebase
-      const snapshot = await get(dbRef);
-      const currentFavorites = snapshot.exists() ? snapshot.val() : {};
-
-      // Check if the discount is already a favorite
-      const isFavorite = favorites.includes(discountId);
-
-      if (isFavorite) {
-        // Remove from favorites
-        delete currentFavorites[discountId];
-      } else {
-        // Add to favorites
-        currentFavorites[discountId] = true;
-      }
-
-      // Save to Firebase Realtime Database
-      await set(dbRef, currentFavorites);
-
-      // Update local state
-      setFavorites(Object.keys(currentFavorites));
-    } catch (error) {
-      console.error("Error toggling favorite: ", error);
-    }
-  };
-
-  const handlePress = (discount: DiscountData) => {
-    navigation.navigate("ViewDiscountScreen", { discount });
-  };
-
-  //if (loading || loadingFavorites)
   if (loading && pageCount === 1) {
     return <LoadingScreen />;
   }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={ styles.tabsContainer}>
+      <View style={styles.tabsContainer}>
         <FilteringTabs
           selectedCategory={selectedCategory}
           onCategoryChange={(category) => setSelectedCategory(category)}
@@ -209,12 +123,15 @@ const Discounts = () => {
             onToggleFavorite={() => toggleFavourite(item.id)}
           />
         )}
-
-        ListFooterComponent = { loadingMore ? <ActivityIndicator size="large" color={colors.primary} /> : null }
+        ListFooterComponent={
+          loadingMore ? (
+            <ActivityIndicator size="large" color={colors.primary} />
+          ) : null
+        }
       />
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   tabsContainer: {
@@ -230,5 +147,3 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-
-export default Discounts;

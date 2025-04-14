@@ -12,9 +12,8 @@ type RootStackParamList = {
   SignIn: undefined;
   FavouriteDiscounts: undefined;
   EventsScreen: undefined;
-  ViewEventScreen: { event: EventData };
   DiscountsScreen: undefined;
-  ViewDiscountScreen: { discount: DiscountData };
+  ViewContentScreen: { data: EventData | DiscountData };
 };
 export default RootStackParamList;
 
@@ -50,17 +49,8 @@ export type EventsScreenProps = StackScreenProps<
   RootStackParamList,
   "EventsScreen"
 >;
-export type ViewEventScreenProps = StackScreenProps<
-  RootStackParamList,
-  "ViewEventScreen"
->;
 
 export type DiscountsScreenProps = StackScreenProps<
   RootStackParamList,
   "DiscountsScreen"
->;
-
-export type ViewDiscountScreenProps = StackScreenProps<
-  RootStackParamList,
-  "ViewDiscountScreen"
 >;

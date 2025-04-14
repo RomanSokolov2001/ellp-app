@@ -39,9 +39,11 @@ const EventCard: React.FC<EventCardProps> = ({
         )}
 
         <View style={styles.content}>
-          <Text style={styles.date}>
+          {date && date !== "/" && (
+            <Text style={styles.date}>
             {date}
-          </Text>
+            </Text>
+          )}
 
           <Text style={styles.title}>{title}</Text>
           
