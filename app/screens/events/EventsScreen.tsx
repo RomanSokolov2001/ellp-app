@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import EventCard from "@/components/EventCard";
+import Card from "@/components/Card";
 import LoadingScreen from "@/components/LoadingScreen";
 import colors from "@/assets/colors/colors";
 import { useNavigation } from "@react-navigation/native";
@@ -110,14 +110,12 @@ export default function EventsScreen(){
         data={events}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <EventCard
+          <Card
             imageUrl={item.imageUrl}
-            location={item.location}
-            description={item.description}
-            date={item.date}
             title={item.title}
-            onPress={() => handlePress(item)}
+            date={item.date}
             stock={item.stock ? item.stock : 0}
+            onPress={() => handlePress(item)}
           />
         )}
         ListFooterComponent = { loadingMore ? <ActivityIndicator size="large" color={colors.primary} /> : null }

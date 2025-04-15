@@ -1,60 +1,45 @@
-import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
+  Image
 } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
 import colors from "@/assets/colors/colors";
-import images from "@/utils/imageMapping";
 
-type DiscountCardProps = {
+type CardProps = {
   imageUrl: string;
-  location: string;
   title: string;
-  discount: string;
-  category?: string;
+  date?: string;
+  stock?: number;
   onPress: () => void;
-  onToggleFavorite: (isFavorite: boolean) => void;
-  isFavorite?: boolean;
 };
 
-const DiscountCard: React.FC<DiscountCardProps> = ({
-  imageUrl,
-  location,
-  title,
-  discount,
-  onPress,
-  onToggleFavorite,
-  isFavorite,
-}) => {
-  const [favorite, setFavorite] = useState(isFavorite);
-
-  const toggleFavorite = () => {
-    const newFavoriteState = !favorite;
-    setFavorite(newFavoriteState);
-    onToggleFavorite(newFavoriteState);
-  };
-
-  useEffect(() => {
-    setFavorite(isFavorite);
-  }, [isFavorite]);
-
-  const resolvedImage = images[imageUrl];
-
+export default function Card(props:CardProps){
   return (
     <View style={styles.card}>
       <ImageBackground
-        source={{ uri: imageUrl }}
+        source={{ uri: props.imageUrl }}
         style={styles.image}
       >
+        {props.stock === 0 && (
+          <View style={styles.sold}>
+          <Text style={styles.soldText}>Sold Out</Text>
+        </View>
+        )}
+
         <View style={styles.content}>
-          <Text style={styles.title}>{title}</Text>
+          {props.date && props.date !== "/" && (
+            <Text style={styles.date}>
+            {props.date}
+            </Text>
+          )}
+
+          <Text style={styles.title}>{props.title}</Text>
           
-          <TouchableOpacity style={styles.button} onPress={onPress}>
-              <Text style={styles.buttonText}>View discount</Text>
+          <TouchableOpacity style={styles.button} onPress={props.onPress}>
+              <Text style={styles.buttonText}>View event</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -80,7 +65,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     display: "flex",
-    justifyContent: "flex-end",
+    justifyContent: "flex-end"
   },
   content: {
     padding: 16,
@@ -135,5 +120,3 @@ const styles = StyleSheet.create({
     fontFamily: "Lexend-Regular",
   },
 });
-
-export default DiscountCard;

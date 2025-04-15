@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FilteringTabs from "@/components/FilteringTabs";
-import DiscountCard from "@/components/DiscountCard";
 import LoadingScreen from "@/components/LoadingScreen";
-import stripHtml from "@/app/services/stripHTML";
 import colors from "@/assets/colors/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import RootStackParamList from "@/app/types/Navigation";
+import Card from "@/components/Card";
 
 export class DiscountData {
   constructor(
@@ -113,14 +112,10 @@ export default function Discounts() {
         data={discounts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <DiscountCard
+          <Card
             imageUrl={item.imageUrl}
-            location={item.location}
             title={item.title}
-            discount={item.discount}
             onPress={() => handlePress(item)}
-            isFavorite={favorites.includes(item.id)}
-            onToggleFavorite={() => toggleFavourite(item.id)}
           />
         )}
         ListFooterComponent={

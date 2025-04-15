@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Linking,
+  Platform,
 } from "react-native";
 import { useLayoutEffect, useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -84,7 +85,7 @@ const ViewContentScreen = () => {
         </View>
 
         {/* Image */}
-        <View>
+        <View style={styles.imageWrapper}>
           <Image
             source={{ uri: data.imageUrl }}
             style={ [styles.imagePreview, { height: imageHeight }] }
@@ -245,11 +246,21 @@ const styles = StyleSheet.create({
     fontFamily: "Lexend-SemiBold",
     color: colors.primary,
   },
+  imageWrapper: {
+    borderRadius: 16,
+    overflow: Platform.OS === 'android' ? 'hidden' : 'visible',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+    backgroundColor: colors.white, // bitno da se popuni pozadina!
+  },
   imagePreview: {
-    width: "100%",
+    width: '100%',
     height: 400,
     borderRadius: 16,
-  },
+  },  
   infoContainer: {
     gap: 8,
   },
