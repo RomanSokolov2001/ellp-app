@@ -15,7 +15,7 @@ import {usePreventScreenCapture} from "expo-screen-capture";
 import {useSelector} from "react-redux";
 import {RootState} from "@/app/redux/store";
 import {authService} from "@/app/api/authAPI";
-import QRCodeComponent from "@/components/Profile/QRCodeComponent";
+import QRCodeWrapperComponent from "@/components/Profile/QRCodeWrapperComponent";
 
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<
@@ -80,7 +80,7 @@ const Membership = () => {
                     )}
                 </View> */}
                 <View>
-                    <QRCodeComponent email={userData?.email}></QRCodeComponent>
+                    <QRCodeWrapperComponent email={userData?.email}/>
                 </View>
                 <Text
                     style={{fontFamily: "Lexend-Medium", fontSize: 20}}

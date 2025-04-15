@@ -25,11 +25,13 @@ export interface DiscountData {
   imageUrl: string;
   location: string;
   title: string;
+  description: string;
   discount: string;
   category: string;
   locationPostalCode: string;
   locationStreet: string;
   locationCity: string;
+  mapsUrl: string;
 }
 
 type DiscountsScreenNavigationProp = NativeStackNavigationProp<
