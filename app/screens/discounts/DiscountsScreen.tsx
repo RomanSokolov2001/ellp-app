@@ -8,15 +8,16 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import RootStackParamList from "@/app/types/Navigation";
 import Card from "@/components/Card";
+import Category from "@/app/types/Category";
 
 export class DiscountData {
   constructor(
     public id: string,
     public title: string,
     public imageUrl: string,
-    public location: string,
+    public location: string[],
     public discount: string,
-    public industry: string,
+    public industry: Category,
   ) {}
 }
 
@@ -62,9 +63,14 @@ export default function Discounts() {
           discount.id.toString(),
           discount.title.rendered,
           discount._embedded["wp:featuredmedia"][0].source_url,
-          discount.acf.location || "/",
+          [...discount.acf.location?.split('\n') || '/'],
           discount.acf.discount || "/",
-          discount.acf.industry || "/",
+          new Category({
+            id: discount.acf.industry.term_id,
+            parentId: discount.acf.industry.parent,
+            name: discount.acf.industry.name || "Uncategorized",
+            description: discount.acf.industry.description,
+          }) || "/",
         ));
 
         // Append new discounts to the existing state in case of pagination

@@ -15,13 +15,12 @@ export class EventData {
     public id: string,
     public title: string,
     public imageUrl: any,
-    public location: string,
+    public location: string[],
     public date: string,
     public description: any,
     public category: any,
     public discount?: string,
     public price?: string,
-    public webPageUrl?: string,
     public stock?: number
   ) {}
 }
@@ -53,22 +52,21 @@ export default function EventsScreen(){
     async function fetchEvents(){
       try {
         setLoading(true);
-        setLoadingMore(true);
 
         const response = await fetch(`https://erasmuslifelaspalmas.com/wp-json/custom/v1/events?page=${pageCount}&per_page=${pageSize}`);
         const data = await response.json();
+        console.log("Fetched events:", data[0].acf.event_location);
         const eventsData = data.map((event: any) => new EventData(
           event.id.toString(),                                 // id
           event.name,                                          // title
           event.images[0].src,                                 // imageUrl
-          getMetaValue(event, "event_location") || "/",         // location
-          getMetaValue(event, "event_date") || "/",             // date
+          [...event.acf.event_location?.split('\n') || "/"],   // location [possibly multiple]
+          event.acf.event_date || "/",                         // date
           stripHtml(event.description),                        // description
-          event.categories[0]?.name || "/",                     // category
-          undefined,                                           // discount (nije dostupno iz API-ja)
+          event.categories[0].name || "/",                     // category
+          undefined,                                           // discount (not available in this case)
           event.price,                                         // price
-          event.permalink,                                     // webPageUrl
-          event.stock_quantity               // stock
+          event.stock_quantity                                 // stock
         ));
 
         // Append new discounts to the existing state in case of pagination
@@ -92,6 +90,7 @@ export default function EventsScreen(){
 
   function handleLoadMore(){
     if (!loadingMore && !allFetched) {
+      setLoadingMore(true);
       setPageCount(prev => prev + 1);
     }
   };

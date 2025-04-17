@@ -21,19 +21,19 @@ type ViewContentRouteProp = RouteProp<RootStackParamList, "ViewContentScreen">;
 const ViewContentScreen = () => {
   const route = useRoute<ViewContentRouteProp>();
   const navigation = useNavigation();
-  const { data } = route.params;
-
-  //render flags for event and discount
-  const isEvent = data instanceof EventData;
-  const isDiscount = !isEvent;
-
   useLayoutEffect(() => {
     navigation.setOptions({ title: "" });
   }, [navigation]);
 
+  const { data } = route.params;
+
+  //render flags
+  const isEvent = data instanceof EventData;
+  const isDiscount = !isEvent;
+
+  // Calculate image height
   const screenWidth = Dimensions.get("window").width;
   const [imageHeight, setImageHeight] = useState(200);
-
   useEffect(() => {
     if (data.imageUrl) {
       Image.getSize(
@@ -49,17 +49,19 @@ const ViewContentScreen = () => {
     }
   }, [data.imageUrl]);
 
+  // Open the webpage URL in the default browser
   const openWebPage = () => {
-    if (isEvent && data.webPageUrl) {
-      Linking.openURL(data.webPageUrl).catch((err) =>
+    if (isEvent && data.imageUrl) {
+      Linking.openURL(data.imageUrl).catch((err) =>
         console.error("Failed to open URL:", err)
       );
     }
   };
 
-  const openMap = () => {
+  // Open Google Maps with the location
+  const openMap = (loc : string) => {
     if (data.location) {
-      const locationQuery = encodeURIComponent(data.location);
+      const locationQuery = encodeURIComponent(loc);
       const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${locationQuery}`;
       Linking.openURL(mapsUrl).catch((err) =>
         console.error("Failed to open maps URL:", err)
@@ -74,7 +76,7 @@ const ViewContentScreen = () => {
         <View style={styles.previewHeader}>
           <Text style={styles.title}>{data.title}</Text>
           <Text style={styles.category}>
-            {isEvent ? data.category : data.industry}
+            {isEvent ? data.category : data.industry.name}
           </Text>
 
           {isEvent && !data.stock && (
@@ -112,27 +114,27 @@ const ViewContentScreen = () => {
 
           {/* Location */}
           {data.location && (
-            <TouchableOpacity onPress={openMap}>
-              <View style={styles.singleInfo}>
-                <View style={styles.iconCircle}>
-                  <MaterialIcons
-                    name="place"
-                    size={28}
-                    color={colors.secondary}
-                  />
-                </View>
-                <View style={styles.infoTextContainer}>
-                  <Text
-                    style={[
-                      styles.infoTextMain,
-                      isDiscount && { color: colors.primary },
-                    ]}
-                  >
-                    {data.location}
-                  </Text>
-                </View>
+            <View style={styles.singleInfo}>
+              <View style={styles.iconCircle}>
+                <MaterialIcons
+                  name="place"
+                  size={28}
+                  color={colors.secondary}
+                />
               </View>
-            </TouchableOpacity>
+
+              <View style={styles.infoTextContainer}>
+                {data.location.map((loc:string, i:number) => (
+                  <TouchableOpacity
+                  onPress={()=>{openMap(loc)}}
+                  key={loc}>
+                    <Text style={[styles.infoTextMain, styles.linkText, { marginBottom: i < data.location.length - 1 ? 8 : 0 }]}>
+                      {loc}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
           )}
 
           {/* Price or Discount */}
@@ -168,7 +170,7 @@ const ViewContentScreen = () => {
           )}
 
           {/* Web page */}
-          {isEvent && data.webPageUrl && (
+          {isEvent && data.imageUrl && (
             <View style={styles.singleInfo}>
               <View style={styles.iconCircle}>
                 <MaterialIcons
@@ -254,7 +256,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
-    backgroundColor: colors.white, // bitno da se popuni pozadina!
+    backgroundColor: colors.white, // to ensure the background is white for PNGs
   },
   imagePreview: {
     width: '100%',
@@ -283,6 +285,9 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 16,
     fontFamily: "Lexend-ExtraLight",
+  },
+  linkText: {
+    color: colors.primary,
   },
   infoTextMain: {
     fontSize: 16,
