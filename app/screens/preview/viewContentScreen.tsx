@@ -74,9 +74,9 @@ const ViewContentScreen = () => {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.previewHeader}>
-          <Text style={styles.title}>{data.title}</Text>
+          <Text style={styles.title}>{require("he").decode(data.title)}</Text>
           <Text style={styles.category}>
-            {isEvent ? data.category : data.industry.name}
+            {isEvent ? require("he").decode(data.category) : require("he").decode(data.industry.name)}
           </Text>
 
           {isEvent && !data.stock && (

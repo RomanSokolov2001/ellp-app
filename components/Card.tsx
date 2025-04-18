@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  ImageBackground,
   StyleSheet,
   TouchableOpacity,
   Image
@@ -19,30 +18,33 @@ type CardProps = {
 export default function Card(props:CardProps){
   return (
     <View style={styles.card}>
-      <ImageBackground
-        source={{ uri: props.imageUrl }}
-        style={styles.image}
-      >
+        {/* thumbnail */}
+        <Image
+          source={{ uri: props.imageUrl }}
+          style={styles.image}
+        />
+
+        {/* Sold out indicator */}
         {props.stock === 0 && (
           <View style={styles.sold}>
           <Text style={styles.soldText}>Sold Out</Text>
         </View>
         )}
-
-        <View style={styles.content}>
+  
+        {/* card footer */} 
+        <View style={styles.cardFooter}>
           {props.date && props.date !== "/" && (
             <Text style={styles.date}>
             {props.date}
             </Text>
           )}
 
-          <Text style={styles.title}>{props.title}</Text>
+          <Text style={styles.title}>{require('he').decode(props.title)}</Text>
           
           <TouchableOpacity style={styles.button} onPress={props.onPress}>
               <Text style={styles.buttonText}>View event</Text>
           </TouchableOpacity>
         </View>
-      </ImageBackground>
     </View>
   );
 };
@@ -53,23 +55,27 @@ const styles = StyleSheet.create({
     height: 400,
     marginBottom: 16,
     borderRadius: 16,
+    overflow: "hidden",
     backgroundColor: colors.white,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
-    overflow: "hidden",
   },
   image:{
     width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "flex-end"
+    flex: 1,
+    objectFit: "cover",
   },
-  content: {
+  cardFooter: {
     padding: 16,
     backgroundColor: "#ffff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5
   },
   date: {
     fontSize: 12,

@@ -1,46 +1,46 @@
+import DiscountCategory from "@/app/types/DiscountCategory";
 import colors from "@/assets/colors/colors";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 
 type FilteringTabsProps = {
-  selectedCategory: string;
-  onCategoryChange: (category: string) => void;
+  categories : DiscountCategory[];
+  selectedCategory: number;
+  onCategoryChange: (category: number) => void;
 };
 
-const categories = [
-  { name: "All", color: colors.all_tab },
-  { name: "Restaurants & Nightlife", color: colors.food_tab },
-  { name: "Lifestyle", color: colors.enertainment_tab },
-  { name: "Fitness", color: colors.fitness_tab },
-  { name: "Beauty", color: colors.adventure_tab },
-  { name: "Accommodation", color: colors.accommodation_tab },
-  { name: "Transportation", color: colors.travel_tab },
-  { name: "Education", color: colors.primary },
-];
-
-const FilteringTabs: React.FC<FilteringTabsProps> = ({
-  selectedCategory,
-  onCategoryChange,
-}) => {
+function FilteringTabs(props: FilteringTabsProps) {
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       style={styles.srollView}
     >
-      {categories.map((category) => (
+      {/* All categories tab */}
+      <TouchableOpacity
+        style={[
+          styles.tab,
+          styles.firstTab,
+          props.selectedCategory === 0 ? styles.selectedTab : styles.tab,
+        ]}
+        onPress={() => props.onCategoryChange(0)}
+      >
+        <Text style={[styles.tabText, props.selectedCategory === 0 ? styles.selectedTabText : styles.tabText]}>All</Text>
+      </TouchableOpacity>
+      
+      {/* The rest of the category tabs */}
+      {props.categories.map((category:DiscountCategory, i:number) => (
         <TouchableOpacity
-          key={category.name}
+          key={category.id}
           style={[
             styles.tab,
-            {
-              backgroundColor: category.color,
-              ...(selectedCategory === category.name && styles.selectedTab),
-            },
+            props.selectedCategory === category.id ? styles.selectedTab : styles.tab
           ]}
-          onPress={() => onCategoryChange(category.name)} // Call the callback here
+          onPress={() => props.onCategoryChange(category.id)}
         >
-          <Text style={styles.tabText}>{category.name}</Text>
+          <Text style={[styles.tabText, props.selectedCategory === category.id ? styles.selectedTabText : styles.tabText]}>
+            {require('he').decode(category.name)}
+          </Text>
         </TouchableOpacity>
       ))}
     </ScrollView>
@@ -52,6 +52,9 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   tab: {
+    backgroundColor: colors.primaryTransparent,
+    borderColor: colors.secondary,
+    borderWidth: 2,
     paddingVertical: 6,
     paddingHorizontal: 14,
     borderRadius: 16,
@@ -60,12 +63,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tabText: {
-    color: colors.white,
+    color: colors.secondary,
     fontSize: 16,
     fontFamily: "Lexend-Light",
   },
   selectedTab: {
-    shadowColor: colors.primary,
+    backgroundColor: colors.secondary,
+  },
+  selectedTabText: {
+    color: colors.white,
+  },
+  firstTab: {
+    marginLeft: 16,
   },
 });
 

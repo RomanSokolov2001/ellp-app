@@ -55,7 +55,6 @@ export default function EventsScreen(){
 
         const response = await fetch(`https://erasmuslifelaspalmas.com/wp-json/custom/v1/events?page=${pageCount}&per_page=${pageSize}`);
         const data = await response.json();
-        console.log("Fetched events:", data[0].acf.event_location);
         const eventsData = data.map((event: any) => new EventData(
           event.id.toString(),                                 // id
           event.name,                                          // title
