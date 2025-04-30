@@ -6,7 +6,6 @@ import InfoPage from "../screens/profile/InfoPage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProfileSettings from "../screens/profile/ProfileSettings";
 import FavouriteDiscounts from "../screens/profile/FavouriteDiscounts";
-import ViewDiscountScreen from "../screens/discounts/ViewDiscountScreen";
 import RootStackParamList from "../types/Navigation";
 
 const ProfileStack = createNativeStackNavigator<RootStackParamList>();
@@ -78,17 +77,6 @@ export default function ProfileStackScreen() {
       <ProfileStack.Screen
         name="ProfileSettings"
         component={ProfileSettings}
-        options={{
-          headerShown: true,
-          headerBackTitle: "Back",
-          headerShadowVisible: false,
-          headerTitle: "",
-        }}
-      />
-
-      <ProfileStack.Screen
-        name="ViewDiscountScreen"
-        component={ViewDiscountScreen}
         options={{
           headerShown: true,
           headerBackTitle: "Back",

@@ -1,56 +1,51 @@
-import React from "react";
 import {
   View,
   Text,
-  ImageBackground,
   StyleSheet,
   TouchableOpacity,
   Image
 } from "react-native";
 import colors from "@/assets/colors/colors";
 
-type EventCardProps = {
+type CardProps = {
   imageUrl: string;
-  date: string;
-  location: string;
   title: string;
-  description: string;
+  date?: string;
+  inStock?: boolean;
   onPress: () => void;
-  stock?: number;
 };
 
-const EventCard: React.FC<EventCardProps> = ({
-                                               imageUrl,
-                                               date,
-                                               title,
-                                               onPress,
-                                               stock,
-                                             }) => {
+export default function Card(props:CardProps){
   return (
-      <View style={styles.card}>
-        <ImageBackground
-            source={{ uri: imageUrl }}
-            style={styles.image}
-        >
-          {!stock && (
-              <View style={styles.sold}>
-                <Text style={styles.soldText}>Sold Out</Text>
-              </View>
+    <View style={styles.card}>
+        {/* thumbnail */}
+        <Image
+          source={{ uri: props.imageUrl }}
+          style={styles.image}
+        />
+
+        {/* Sold out indicator */}
+        {props.inStock === false && (
+          <View style={styles.sold}>
+          <Text style={styles.soldText}>Sold Out</Text>
+        </View>
+        )}
+  
+        {/* card footer */} 
+        <View style={styles.cardFooter}>
+          {props.date && props.date !== "/" && (
+            <Text style={styles.date}>
+            {props.date}
+            </Text>
           )}
 
-          <View style={styles.content}>
-            <Text style={styles.date}>
-              {date}
-            </Text>
-
-            <Text style={styles.title}>{title}</Text>
-
-            <TouchableOpacity style={styles.button} onPress={onPress}>
+          <Text style={styles.title}>{require('he').decode(props.title)}</Text>
+          
+          <TouchableOpacity style={styles.button} onPress={props.onPress}>
               <Text style={styles.buttonText}>View event</Text>
-            </TouchableOpacity>
-          </View>
-        </ImageBackground>
-      </View>
+          </TouchableOpacity>
+        </View>
+    </View>
   );
 };
 
@@ -60,23 +55,27 @@ const styles = StyleSheet.create({
     height: 400,
     marginBottom: 16,
     borderRadius: 16,
+    overflow: "hidden",
     backgroundColor: colors.white,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
-    overflow: "hidden",
   },
   image:{
     width: "100%",
-    height: "100%",
-    display: "flex",
-    justifyContent: "flex-end",
+    flex: 1,
+    objectFit: "cover",
   },
-  content: {
+  cardFooter: {
     padding: 16,
     backgroundColor: "#ffff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5
   },
   date: {
     fontSize: 12,
@@ -127,5 +126,3 @@ const styles = StyleSheet.create({
     fontFamily: "Lexend-Regular",
   },
 });
-
-export default EventCard;

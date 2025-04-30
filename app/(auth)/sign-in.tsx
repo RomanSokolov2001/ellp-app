@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 30,
-    marginHorizontal: 10,
   },
   signupContainer: {
     flexDirection: "row",

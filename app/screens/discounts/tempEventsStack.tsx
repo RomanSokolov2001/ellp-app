@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 import { View, Text } from "react-native";
 import DiscountsScreen from "./DiscountsScreen";
-import ViewDiscountScreen from "./ViewDiscountScreen";
+import ViewContentScreen from "../preview/viewContentScreen";
 
 const discountsStack = createNativeStackNavigator();
 
@@ -15,8 +15,8 @@ export default function DiscountsStackScreen() {
         options={{ headerShown: false  }}
       />
       <discountsStack.Screen
-        name="ViewDiscount"
-        component={ViewDiscountScreen}
+        name="ViewContentScreen"
+        component={ViewContentScreen}
       />
     </discountsStack.Navigator>
   );
