@@ -69,7 +69,7 @@ const Profile = () => {
         </View>
 
         <View style={{ alignItems: "center", margin: 20 }}>
-          <Text style={styles.username}>{userData?.firstName || "Unknown User"}</Text>
+          <Text style={styles.username}>{`${userData?.firstName} ${userData?.lastName}` || "Unknown User"}</Text>
           <Text style={styles.email}>{userData?.email || "Unknown Email"}</Text>
         </View>
 
@@ -102,7 +102,7 @@ const Profile = () => {
 
       <View>
         <MenuItem
-          icon={<Ionicons name="logout" size={24} color={colors.secondary} />}
+          icon={<Ionicons name="log-out" size={24} color={colors.secondary} />}
           text="Logout"
           textColor={colors.red_text}
           onPress={handleLogout}
