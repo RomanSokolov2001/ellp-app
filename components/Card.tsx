@@ -25,7 +25,7 @@ export default function Card(props:CardProps){
         />
 
         {/* Sold out indicator */}
-        {!props.inStock && (
+        {props.inStock === false && (
           <View style={styles.sold}>
           <Text style={styles.soldText}>Sold Out</Text>
         </View>
