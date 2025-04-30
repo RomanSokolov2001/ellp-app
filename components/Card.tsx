@@ -11,7 +11,7 @@ type CardProps = {
   imageUrl: string;
   title: string;
   date?: string;
-  stock?: number;
+  inStock?: boolean;
   onPress: () => void;
 };
 
@@ -25,7 +25,7 @@ export default function Card(props:CardProps){
         />
 
         {/* Sold out indicator */}
-        {props.stock === 0 && (
+        {!props.inStock && (
           <View style={styles.sold}>
           <Text style={styles.soldText}>Sold Out</Text>
         </View>
