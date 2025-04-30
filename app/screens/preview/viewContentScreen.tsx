@@ -79,7 +79,7 @@ const ViewContentScreen = () => {
             {isEvent ? require("he").decode(data.category) : require("he").decode(data.industry.name)}
           </Text>
 
-          {isEvent && !data.stock && (
+          {isEvent && !data.inStock && (
             <View style={styles.sold}>
               <Text style={styles.soldText}>Sold Out</Text>
             </View>
