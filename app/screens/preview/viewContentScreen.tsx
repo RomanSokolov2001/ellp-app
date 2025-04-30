@@ -52,7 +52,7 @@ const ViewContentScreen = () => {
   // Open the webpage URL in the default browser
   const openWebPage = () => {
     if (isEvent && data.imageUrl) {
-      Linking.openURL(data.imageUrl).catch((err) =>
+      Linking.openURL(data.productUrl).catch((err) =>
         console.error("Failed to open URL:", err)
       );
     }

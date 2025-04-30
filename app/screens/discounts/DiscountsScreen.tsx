@@ -38,7 +38,7 @@ export default function Discounts() {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      try{
+      try {
         const response = await fetch(`https://erasmuslifelaspalmas.com/wp-json/wp/v2/categories?parent=21&orderby=id&order=asc`);
         const data = await response.json();
         const categoriesData = data.map((category: any, index:number) => ({

@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 export class EventData {
   constructor(
     public id: string,
+    public productUrl: string,
     public title: string,
     public imageUrl: any,
     public location: string[],
@@ -70,6 +71,7 @@ export default function EventsScreen(){
           try {
             return new EventData(
               event.id.toString(),                                       // id
+              event.permalink,                                           // product shop link
               event.name,                                                // title
               event.images[0]?.src,                                      // imageUrl
               [...event.acf.event_location?.split('\n') || "/"],         // location [possibly multiple]
