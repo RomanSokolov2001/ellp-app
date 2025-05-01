@@ -9,6 +9,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import RootStackParamList from "@/app/types/Navigation";
 import Card from "@/components/Card";
 import DiscountCategory from "@/app/types/DiscountCategory";
+import stripHtml from "@/app/services/stripHTML";
 
 export class DiscountData {
   constructor(
@@ -113,6 +114,7 @@ export default function Discounts() {
         .map((discount: any) => new DiscountData(
           discount.id,
           discount.title.rendered,
+          stripHtml(discount.content.rendered),
           discount._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "",
           [...discount.acf.location?.split('\n') || '/'],
           discount.acf.discount || "/",

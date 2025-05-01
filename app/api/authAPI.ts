@@ -24,7 +24,7 @@ class AuthAPI {
             console.log(userObject);
             return userObject;
           } catch (err) {
-            console.error(`@AuthService login: could not login: ${(err as Error).message}`)
+            console.error(err)
             throw Error((err as Error).message);
           };
     };

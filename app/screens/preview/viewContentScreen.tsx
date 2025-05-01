@@ -192,7 +192,7 @@ const ViewContentScreen = () => {
         </View>
 
         {/* Description */}
-        {isEvent && data.description && (
+        {data.description && (
           <Text style={styles.description}>{data.description}</Text>
         )}
 
