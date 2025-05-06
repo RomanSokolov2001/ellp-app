@@ -10,18 +10,7 @@ import RootStackParamList from "@/app/types/Navigation";
 import Card from "@/components/Card";
 import DiscountCategory from "@/app/types/DiscountCategory";
 import stripHtml from "@/app/services/stripHTML";
-
-export class DiscountData {
-  constructor(
-    public id: string,
-    public title: string,
-    public description: string,
-    public imageUrl: string,
-    public location: string[],
-    public discount: string,
-    public industry: DiscountCategory,
-  ) {}
-}
+import { DiscountData } from "@/app/types/DiscountData";
   
 export default function Discounts() {
   //navigation for preview on card press
@@ -186,8 +175,7 @@ export default function Discounts() {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Card
-            imageUrl={item.imageUrl}
-            title={item.title}
+            item={item}
             onPress={() => handlePress(item)}
           />
         )}

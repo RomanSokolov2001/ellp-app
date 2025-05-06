@@ -14,7 +14,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import RootStackParamList from "@/app/types/Navigation";
 import colors from "@/assets/colors/colors";
-import { EventData } from "../events/EventsScreen";
+import { EventData } from "../../types/EventData";
 
 type ViewContentRouteProp = RouteProp<RootStackParamList, "ViewContentScreen">;
 

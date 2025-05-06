@@ -6,26 +6,32 @@ import {
   Image
 } from "react-native";
 import colors from "@/assets/colors/colors";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { EventData } from "@/app/types/EventData";
+import { DiscountData } from "@/app/types/DiscountData";
+
 
 type CardProps = {
-  imageUrl: string;
-  title: string;
-  date?: string;
-  inStock?: boolean;
+  item: EventData | DiscountData;
   onPress: () => void;
 };
 
-export default function Card(props:CardProps){
+export default function Card({ item, onPress }: CardProps) {
+
+  //render flags
+  const isEvent = item instanceof EventData;
+  const isDiscount = !isEvent;
+
   return (
     <View style={styles.card}>
         {/* thumbnail */}
         <Image
-          source={{ uri: props.imageUrl }}
+          source={{ uri: item.imageUrl }}
           style={styles.image}
         />
 
         {/* Sold out indicator */}
-        {props.inStock === false && (
+        {isEvent && item.inStock === false && (
           <View style={styles.sold}>
           <Text style={styles.soldText}>Sold Out</Text>
         </View>
@@ -33,15 +39,24 @@ export default function Card(props:CardProps){
   
         {/* card footer */} 
         <View style={styles.cardFooter}>
-          {props.date && props.date !== "/" && (
-            <Text style={styles.date}>
-            {props.date}
-            </Text>
+
+          {isEvent && item.date && item.date != "/" && (
+            <View style={styles.details}>
+              <Ionicons name="calendar" color={colors.btm_nav_unselected}/>
+              <Text style={styles.detailsText}>{item.date}</Text>
+            </View>
           )}
 
-          <Text style={styles.title}>{require('he').decode(props.title)}</Text>
+          {isEvent && item.location && !item.location.includes("/") && (
+            <View style={styles.details}>
+              <Ionicons name="location" color={colors.btm_nav_unselected}/>
+              <Text style={styles.detailsText}>{item.location}</Text>
+            </View>
+          )}
+
+          <Text style={styles.title}>{require('he').decode(item.title)}</Text>
           
-          <TouchableOpacity style={styles.button} onPress={props.onPress}>
+          <TouchableOpacity style={styles.button} onPress={onPress}>
               <Text style={styles.buttonText}>View event</Text>
           </TouchableOpacity>
         </View>
@@ -77,10 +92,15 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5
   },
-  date: {
+  details: {
+    marginBottom: 4,
+    display: "flex",
+    flexDirection: "row",
+    gap: 5,
+  },
+  detailsText: {
     fontSize: 12,
     color: colors.btm_nav_unselected,
-    marginBottom: 4,
     fontFamily: "Lexend-Regular",
   },
   title: {

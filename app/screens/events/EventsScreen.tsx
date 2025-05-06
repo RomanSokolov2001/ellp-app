@@ -9,23 +9,7 @@ import RootStackParamList, { EventsScreenProps } from "@/app/types/Navigation";
 import stripHtml from "@/app/services/stripHTML";
 import getMetaValue from "@/app/services/getMetaValue";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
-export class EventData {
-  constructor(
-    public id: string,
-    public productUrl: string,
-    public title: string,
-    public imageUrl: any,
-    public location: string[],
-    public date: string,
-    public description: any,
-    public category: any,
-    public discount?: string,
-    public price?: string,
-    public inStock?: boolean,
-    public stock?: number
-  ) {}
-}
+import { EventData } from "@/app/types/EventData";
 
 export const wooCommerceStockStatus = {
   INSTOCK: "instock",
@@ -130,10 +114,7 @@ export default function EventsScreen(){
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => (
         <Card
-        imageUrl={item.imageUrl}
-        title={item.title}
-        date={item.date}
-        inStock={item.inStock}
+        item={item}
         onPress={() => handlePress(item)}
         />
       )}
@@ -143,7 +124,6 @@ export default function EventsScreen(){
   );
 };
 
-export default EventsScreen;
 
 const styles = StyleSheet.create({
   list: {

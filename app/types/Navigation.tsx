@@ -1,6 +1,6 @@
-import { DiscountData } from "../screens/discounts/DiscountsScreen";
-import { EventData } from "../screens/events/EventsScreen";
 import { StackScreenProps } from "@react-navigation/stack";
+import { DiscountData } from "./DiscountData";
+import { EventData } from "./EventData";
 
 type RootStackParamList = {
   Profile: undefined;
