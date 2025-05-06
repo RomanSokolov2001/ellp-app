@@ -15,6 +15,9 @@ import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import RootStackParamList from "@/app/types/Navigation";
 import colors from "@/assets/colors/colors";
 import { EventData } from "../../types/EventData";
+import QRCodeModalComponent from "@/components/Profile/QRCodeModalComponent";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
 
 type ViewContentRouteProp = RouteProp<RootStackParamList, "ViewContentScreen">;
 
@@ -26,6 +29,11 @@ const ViewContentScreen = () => {
   }, [navigation]);
 
   const { data } = route.params;
+
+  // qr code stuff
+  const [isModalVisible, setModalVisible] = useState(false);
+  const userData = useSelector((state: RootState) => state.userSlice.user); // Fetch user data from Redux
+
 
   //render flags
   const isEvent = data instanceof EventData;
@@ -70,147 +78,180 @@ const ViewContentScreen = () => {
   };
 
   return (
-    <ScrollView style={{ backgroundColor: colors.white }}>
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.previewHeader}>
-          <Text style={styles.title}>{require("he").decode(data.title)}</Text>
-          <Text style={styles.category}>
-            {isEvent ? require("he").decode(data.category) : require("he").decode(data.industry.name)}
-          </Text>
-
-          {isEvent && !data.inStock && (
-            <View style={styles.sold}>
-              <Text style={styles.soldText}>Sold Out</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Image */}
-        <View style={styles.imageWrapper}>
-          <Image
-            source={{ uri: data.imageUrl }}
-            style={ [styles.imagePreview, { height: imageHeight }] }
-            resizeMode="cover"
-          />
-        </View>
-
-        <View style={styles.infoContainer}>
-          {/* Event Date */}
-          {isEvent && data.date && (
-            <View style={styles.singleInfo}>
-              <View style={styles.iconCircle}>
-                <MaterialIcons
-                  name="event"
-                  size={28}
-                  color={colors.secondary}
-                />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoTextMain}>{data.date}</Text>
-              </View>
-            </View>
-          )}
-
-          {/* Location */}
-          {data.location && (
-            <View style={styles.singleInfo}>
-              <View style={styles.iconCircle}>
-                <MaterialIcons
-                  name="place"
-                  size={28}
-                  color={colors.secondary}
-                />
-              </View>
-
-              <View style={styles.infoTextContainer}>
-                {data.location.map((loc:string, i:number) => (
-                  <TouchableOpacity
-                  onPress={()=>{openMap(loc)}}
-                  key={loc}>
-                    <Text style={[styles.infoTextMain, styles.linkText, { marginBottom: i < data.location.length - 1 ? 8 : 0 }]}>
-                      {loc}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          )}
-
-          {/* Price or Discount */}
-          {isEvent && data.price && (
-            <View style={styles.singleInfo}>
-              <View style={styles.iconCircle}>
-                <MaterialIcons
-                  name="euro"
-                  size={28}
-                  color={colors.secondary}
-                />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoTextMain}>{data.price} euros</Text>
-              </View>
-            </View>
-          )}
-
-          {isDiscount && data.discount && (
-            <View style={styles.singleInfo}>
-              <View style={styles.iconCircle}>
-                <MaterialIcons
-                  name="percent"
-                  size={28}
-                  color={colors.secondary}
-                />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoTextMain}>{data.discount}</Text>
-                <Text style={styles.infoText}>*With the ELLP Membership</Text>
-              </View>
-            </View>
-          )}
-
-          {/* Web page */}
-          {isEvent && data.imageUrl && (
-            <View style={styles.singleInfo}>
-              <View style={styles.iconCircle}>
-                <MaterialIcons
-                  name="info"
-                  size={28}
-                  color={colors.secondary}
-                />
-              </View>
-              <View style={styles.infoTextContainer}>
-                <Text style={styles.infoTextMain}>
-                  Buy the tickets on our{" "}
-                  <Text style={styles.link} onPress={openWebPage}>
-                    webpage
-                  </Text>
-                </Text>
-              </View>
-            </View>
-          )}
-        </View>
-
-        {/* Description */}
-        {data.description && (
-          <Text style={styles.description}>{data.description}</Text>
-        )}
-
-        {/* Extra info for discounts */}
-        {isDiscount && (
-          <View style={styles.extraInfoContainer}>
-            <Text style={{ textAlign: "left", fontSize: 15 }}>
-              Don't have a membership card yet? Sign up today and start enjoying
-              these exclusive benefits at our partner location!
+    <>
+      <ScrollView style={{ backgroundColor: colors.white }}>
+        <View style={styles.container}>
+          {/* Header */}
+          <View style={styles.previewHeader}>
+            <Text style={styles.title}>{require("he").decode(data.title)}</Text>
+            <Text style={styles.category}>
+              {isEvent ? require("he").decode(data.category) : require("he").decode(data.industry.name)}
             </Text>
 
-            <TouchableOpacity onPress={() => navigation.navigate("JoinUs")}>
-              <Text style={styles.link}>Join us here!</Text>
-            </TouchableOpacity>
+            {isEvent && !data.inStock && (
+              <View style={styles.sold}>
+                <Text style={styles.soldText}>Sold Out</Text>
+              </View>
+            )}
           </View>
-        )}
-      </View>
-    </ScrollView>
+
+          {/* Image */}
+          <View style={styles.imageWrapper}>
+            <Image
+              source={{ uri: data.imageUrl }}
+              style={ [styles.imagePreview, { height: imageHeight }] }
+              resizeMode="cover"
+            />
+          </View>
+
+          <View>
+          {
+            isEvent ?
+            <TouchableOpacity style={styles.button} onPress={openWebPage}>
+              <Text style={styles.buttonText}>Buy Tickets</Text>
+              <MaterialIcons
+                name="arrow-circle-right"
+                size={28}
+                color={colors.white}>
+              </MaterialIcons>
+            </TouchableOpacity>
+
+            : 
+            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+              <Text style={styles.buttonText}>Redeem Discount</Text>
+              <MaterialIcons
+                name="qr-code-scanner"
+                size={28}
+                color={colors.white}>
+              </MaterialIcons>
+            </TouchableOpacity>
+
+          }
+          </View>
+
+          <View style={styles.infoContainer}>
+            {/* Event Date */}
+            {isEvent && data.date && (
+              <View style={styles.singleInfo}>
+                <View style={styles.iconCircle}>
+                  <MaterialIcons
+                    name="event"
+                    size={28}
+                    color={colors.secondary}
+                  />
+                </View>
+                <View style={styles.infoTextContainer}>
+                  <Text style={styles.infoTextMain}>{data.date}</Text>
+                </View>
+              </View>
+            )}
+
+            {/* Location */}
+            {data.location && (
+              <View style={styles.singleInfo}>
+                <View style={styles.iconCircle}>
+                  <MaterialIcons
+                    name="place"
+                    size={28}
+                    color={colors.secondary}
+                  />
+                </View>
+
+                <View style={styles.infoTextContainer}>
+                  {data.location.map((loc:string, i:number) => (
+                    <TouchableOpacity
+                    onPress={()=>{openMap(loc)}}
+                    key={loc}>
+                      <Text style={[styles.infoTextMain, styles.linkText, { marginBottom: i < data.location.length - 1 ? 8 : 0 }]}>
+                        {loc}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {/* Price or Discount */}
+            {isEvent && data.price && (
+              <View style={styles.singleInfo}>
+                <View style={styles.iconCircle}>
+                  <MaterialIcons
+                    name="euro"
+                    size={28}
+                    color={colors.secondary}
+                  />
+                </View>
+                <View style={styles.infoTextContainer}>
+                  <Text style={styles.infoTextMain}>{data.price} euros</Text>
+                </View>
+              </View>
+            )}
+
+            {isDiscount && data.discount && (
+              <View style={styles.singleInfo}>
+                <View style={styles.iconCircle}>
+                  <MaterialIcons
+                    name="percent"
+                    size={28}
+                    color={colors.secondary}
+                  />
+                </View>
+                <View style={styles.infoTextContainer}>
+                  <Text style={styles.infoTextMain}>{data.discount}</Text>
+                  <Text style={styles.infoText}>*With the ELLP Membership</Text>
+                </View>
+              </View>
+            )}
+
+            {/* Web page */}
+            {isEvent && data.imageUrl && (
+              <View style={styles.singleInfo}>
+                <View style={styles.iconCircle}>
+                  <MaterialIcons
+                    name="info"
+                    size={28}
+                    color={colors.secondary}
+                  />
+                </View>
+                <View style={styles.infoTextContainer}>
+                  <Text style={styles.infoTextMain}>
+                    Buy the tickets on our{" "}
+                    <Text style={styles.link} onPress={openWebPage}>
+                      webpage
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
+
+          {/* Description */}
+          {data.description && (
+            <Text style={styles.description}>{data.description}</Text>
+          )}
+
+          {/* Extra info for discounts */}
+          {isDiscount && (
+            <View style={styles.extraInfoContainer}>
+              <Text style={{ textAlign: "left", fontSize: 15 }}>
+                Don't have a membership card yet? Sign up today and start enjoying
+                these exclusive benefits at our partner location!
+              </Text>
+
+              <TouchableOpacity onPress={() => navigation.navigate("JoinUs")}>
+                <Text style={styles.link}>Join us here!</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+
+      <QRCodeModalComponent
+        email={userData?.email}
+        visibility={isModalVisible}
+        onClose={() => setModalVisible(false)}
+      ></QRCodeModalComponent>
+    </>
   );
 };
 
@@ -306,5 +347,23 @@ const styles = StyleSheet.create({
   extraInfoContainer: {
     marginTop: 10,
     marginBottom: 20,
+  },
+  button: {
+    backgroundColor: colors.secondary,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 16,
+    alignSelf: "flex-start",
+    width: "100%",
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+  },
+  buttonText: {
+    color: colors.white,
+    fontFamily: "Lexend-Medium",
+    fontSize: 14,
   },
 });
