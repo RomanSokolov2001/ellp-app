@@ -111,7 +111,7 @@ const ViewContentScreen = () => {
               <Text style={styles.buttonText}>Buy Tickets</Text>
               <MaterialIcons
                 name="arrow-circle-right"
-                size={28}
+                size={20}
                 color={colors.white}>
               </MaterialIcons>
             </TouchableOpacity>
@@ -121,7 +121,7 @@ const ViewContentScreen = () => {
               <Text style={styles.buttonText}>Redeem Discount</Text>
               <MaterialIcons
                 name="qr-code-scanner"
-                size={28}
+                size={20}
                 color={colors.white}>
               </MaterialIcons>
             </TouchableOpacity>
@@ -247,7 +247,7 @@ const ViewContentScreen = () => {
       </ScrollView>
 
       <QRCodeModalComponent
-        email={userData?.email}
+        email={userData?.email || ""}
         visibility={isModalVisible}
         onClose={() => setModalVisible(false)}
       ></QRCodeModalComponent>

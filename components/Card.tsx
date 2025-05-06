@@ -57,7 +57,11 @@ export default function Card({ item, onPress }: CardProps) {
           <Text style={styles.title}>{require('he').decode(item.title)}</Text>
           
           <TouchableOpacity style={styles.button} onPress={onPress}>
-              <Text style={styles.buttonText}>View event</Text>
+              <Text style={styles.buttonText}>
+                {
+                  isEvent ? "View Event" : "View Discount"
+                }
+              </Text>
           </TouchableOpacity>
         </View>
     </View>

@@ -5,7 +5,11 @@ import { useState } from 'react';
 import QRCodeComponent from './QRCodeComponent';
 import QRCodeModalComponent from './QRCodeModalComponent';
 
-export default function QRCodeWrapperComponent({ email }) {
+interface QRCodeWrapperProps {
+  email: string;
+}
+
+export default function QRCodeWrapperComponent({ email }: QRCodeWrapperProps) {
   const [isModalVisible, setModalVisible] = useState(false);
 
   return (

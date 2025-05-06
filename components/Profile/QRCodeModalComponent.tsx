@@ -3,7 +3,13 @@ import { Modal, Pressable, StyleSheet } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import QRCodeComponent from "./QRCodeComponent";
 
-export default function QRCodeModalComponent({ email, visibility, onClose }) {
+interface QRCodeModalComponentProps {
+    email: string;
+    visibility: boolean;
+    onClose: () => void;
+}
+
+export default function QRCodeModalComponent({ email, visibility, onClose }: QRCodeModalComponentProps) {
     
     return (
         <Modal

@@ -21,19 +21,27 @@ export type ProfileScreenProps = StackScreenProps<
   RootStackParamList,
   "Profile"
 >;
+
 export type MembershipScreenProps = StackScreenProps<
   RootStackParamList,
   "Membership"
 >;
-export type JoinUsScreenProps = StackScreenProps<RootStackParamList, "JoinUs">;
+
+export type JoinUsScreenProps = StackScreenProps<
+  RootStackParamList, 
+  "JoinUs"
+>;
+
 export type PaymentScreenProps = StackScreenProps<
   RootStackParamList,
   "PaymentScreen"
 >;
+
 export type InfoPageScreenProps = StackScreenProps<
   RootStackParamList,
   "InfoPage"
 >;
+
 export type SettingsPageScreenProps = StackScreenProps<
   RootStackParamList,
   "ProfileSettings"
@@ -43,7 +51,11 @@ export type FavouritesPageScreenProps = StackScreenProps<
   RootStackParamList,
   "FavouriteDiscounts"
 >;
-export type SignInScreenProps = StackScreenProps<RootStackParamList, "SignIn">;
+
+export type SignInScreenProps = StackScreenProps<
+  RootStackParamList, 
+  "SignIn"
+>;
 
 export type EventsScreenProps = StackScreenProps<
   RootStackParamList,
